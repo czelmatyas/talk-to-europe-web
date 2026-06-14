@@ -108,6 +108,8 @@ button,input{font-family:inherit}
 .flagav{width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #fff;cursor:pointer;position:relative;z-index:2}
 .flagav img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
 .addav{width:36px;height:36px;border-radius:50%;background:var(--fill);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px #fff;position:relative;z-index:3}
+.addav[data-on="1"]{background:rgba(42,39,242,.12)}
+.cornerbadge.star{box-shadow:0 0 0 1.5px rgba(20,22,40,.12)}
 .pchipflag{width:20px;height:20px;border-radius:50%;object-fit:cover;display:block}
 .flagwrap{position:relative;display:inline-flex;align-items:center}
 /* corner badge: + to add a suggestion, × to remove the connected filter — small stroke for visibility on the flag */

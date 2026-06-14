@@ -35,6 +35,7 @@ const CHIPS = ['My train was delayed', 'Is this true?', 'Health cover abroad', '
 const flagSrc = code => 'https://cdn.jsdelivr.net/gh/HatScripts/circle-flags/flags/' + code.toLowerCase() + '.svg'
 const PlusMini = () => <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#141414" strokeWidth="3" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
 const XMini = () => <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#141414" strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+const StarMini = () => <svg viewBox="0 0 24 24" width="9" height="9" fill="#f4a91e"><path d="M12 2.5l2.7 5.9 6.4.6-4.8 4.3 1.4 6.3L12 16.9 6.3 19.6l1.4-6.3L2.9 9.0l6.4-.6z" /></svg>
 
 export default function Talk({ setPalette, resetPalette }) {
   const [msgs, setMsgs] = useState([])
@@ -91,22 +92,23 @@ export default function Talk({ setPalette, resetPalette }) {
         {sweep > 0 && <EdgeSweep key={sweep} cols={sweepPal} />}
         <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: '2px 0 14px' }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Talk to Europe" />
         <div className="cttoolbar">
-          <div className="ctxchips">
           <div className="avstack">
             <StarAvatar size={36} />
             <AnimatePresence initial={false} mode="wait">
               {country
                 ? <motion.span key="flag" className="flagav" initial={{ opacity: 0, scale: .6, x: -10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: .6, x: -10 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={clearCountry} title={'Remove ' + country[1]}><img src={flagSrc(country[0])} alt={country[1]} /><i className="cornerbadge"><XMini /></i></motion.span>
-                : <motion.button key="add" className="addav" initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .6 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => setPicker(p => !p)} aria-label="Add country"><Plus /></motion.button>}
+                : <motion.button key="add" className="addav" data-on={picker ? 1 : 0} initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .6 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => setPicker(p => !p)} aria-label="Add country"><Plus /></motion.button>}
             </AnimatePresence>
           </div>
-          <AnimatePresence initial={false}>
-            {picker
-              ? ALL.map(c => <motion.button key={c[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)
-              : sugg.length
-                ? sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><span className="flagwrap"><img className="pchipflag" src={flagSrc(c[0])} alt="" /><i className="cornerbadge plus"><PlusMini /></i></span>{c[1]}</motion.button>)
-                : (!country && loc && <motion.button key="loc" className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(loc)} title="Suggested from your location"><span className="flagwrap"><img className="pchipflag" src={flagSrc(loc[0])} alt="" /><i className="cornerbadge plus"><PlusMini /></i></span>{loc[1]}</motion.button>)}
-          </AnimatePresence>
+          <div className="ctxchips">
+            <AnimatePresence initial={false}>
+              {picker
+                ? [
+                    <motion.button key={loc[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(loc)} title="Suggested from your location"><span className="flagwrap"><img className="pchipflag" src={flagSrc(loc[0])} alt="" /><i className="cornerbadge star"><StarMini /></i></span>{loc[1]}</motion.button>,
+                    ...ALL.filter(c => c[0] !== loc[0]).map(c => <motion.button key={c[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)
+                  ]
+                : sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)}
+            </AnimatePresence>
           </div>
           {val.trim()
             ? <button className="send" onClick={() => send()}><SendIco /></button>

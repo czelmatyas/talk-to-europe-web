@@ -44,15 +44,20 @@ export default function GradientBackdrop({ palette, motion = 1, blur = 1 }) {
         P.glow = mix(target.current.from.glow, target.current.to.glow, e)
         if (k >= 1) target.current = null
       }
-      const m = motionR.current, D = derive(P), t = now / 1000, W = off.width, H = off.height, a = 4.5 * m * Math.sin(t * 0.10), b2 = 4.5 * m * Math.cos(t * 0.085)
+      const m = motionR.current, D = derive(P), t = now / 1000, W = off.width, H = off.height
+      // each blob drifts on its own faster path + a gentle size pulse → visibly lively
+      const ax = 6 * m * Math.sin(t * 0.34), ay = 6 * m * Math.cos(t * 0.29)
+      const bx = 6 * m * Math.cos(t * 0.26 + 1.7), by = 6 * m * Math.sin(t * 0.31 + 0.6)
+      const cx = 6 * m * Math.sin(t * 0.28 + 3.1), cy = 6 * m * Math.cos(t * 0.37 + 2.2)
+      const pul = (s, ph) => s + 4 * m * Math.sin(t * 0.45 + ph)
       const bg = octx.createLinearGradient(0, 0, 0, H)
       bg.addColorStop(0, D.baseTop); bg.addColorStop(.5, P.mid); bg.addColorStop(1, D.baseBot)
       octx.fillStyle = bg; octx.fillRect(0, 0, W, H)
-      eblob(octx, W, H, 37 + a, 58 + b2, 62, 54, D.warm, 0.40, .66)
-      eblob(octx, W, H, 62 - a, 76 + b2 * 0.6, 70, 58, D.deep, 0.50, .68)
-      eblob(octx, W, H, 76 + a, 33 - b2, 54, 46, D.cool, 0.58, .62)
-      eblob(octx, W, H, 27 - a, 24 + b2, 58, 48, P.top, 0.72, .64)
-      eblob(octx, W, H, 50 + a * 0.6, 112, 86, 70, P.glow, 0.92, .66)
+      eblob(octx, W, H, 37 + ax, 58 + ay, pul(62, 0), pul(54, 1), D.warm, 0.40, .66)
+      eblob(octx, W, H, 62 + bx, 76 + by, pul(70, 2), pul(58, 3), D.deep, 0.50, .68)
+      eblob(octx, W, H, 76 + cx, 33 + cy, pul(54, 4), pul(46, 5), D.cool, 0.58, .62)
+      eblob(octx, W, H, 27 + bx, 24 + ay, pul(58, 6), pul(48, 1.5), P.top, 0.72, .64)
+      eblob(octx, W, H, 50 + ax * 0.7, 112 + cy * 0.5, pul(86, 2.5), pul(70, 3.5), P.glow, 0.92, .66)
       const bpx = Math.max(8, (cv.clientHeight || window.innerHeight) * 0.06) * blurR.current
       ctx.clearRect(0, 0, cv.width, cv.height)
       ctx.save(); ctx.filter = 'blur(' + bpx + 'px)'; ctx.drawImage(off, -(off.width - cv.width) / 2, -(off.height - cv.height) / 2); ctx.restore()

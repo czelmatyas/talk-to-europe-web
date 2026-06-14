@@ -15,7 +15,14 @@ export default function StarAvatar({ size = 36 }) {
       const base = (seg + smooth(frac)) * STEP
       for (let i = 0; i < stars.length; i++) {
         const a = base + i * STEP
-        stars[i].setAttribute('transform', 'translate(' + (50 + R * Math.sin(a)).toFixed(2) + ',' + (CY - R * Math.cos(a)).toFixed(2) + ')')
+        const x = 50 + R * Math.sin(a), y = CY - R * Math.cos(a)
+        // angular distance from the apex (centre of the clip) → fade + scale in approaching, out leaving
+        let dd = a % (2 * Math.PI); if (dd > Math.PI) dd -= 2 * Math.PI; else if (dd < -Math.PI) dd += 2 * Math.PI
+        dd = Math.abs(dd)
+        const op = Math.max(0, Math.min(1, 1 - dd / (STEP * 1.15)))
+        const k = 0.78 + 0.22 * op
+        stars[i].setAttribute('transform', 'translate(' + x.toFixed(2) + ',' + y.toFixed(2) + ') scale(' + k.toFixed(3) + ')')
+        stars[i].setAttribute('opacity', op.toFixed(3))
       }
       raf = requestAnimationFrame(tick)
     }
