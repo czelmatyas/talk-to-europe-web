@@ -55,7 +55,6 @@ export default function Talk({ setPalette, resetPalette }) {
 
   return <>
     <div className="scroll">
-      {!started && <div className="intro"><h1>Ask Europe anything.</h1><p>Your rights, your options, what the EU actually does — in plain language.</p></div>}
       {msgs.map((m, i) => m.role === 'me'
         ? <motion.div key={i} className="bubble me" {...rise}>{m.text}</motion.div>
         : <div key={i}>
