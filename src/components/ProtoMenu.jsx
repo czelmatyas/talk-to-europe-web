@@ -28,7 +28,7 @@ function useDeployments(open) {
 
 function DeployRow({ d }) {
   return (
-    <a className="pmrow" href={d.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+    <a className="pmrow" href={d.url} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div style={{ minWidth: 0 }}>
         <div className="t">{d.name}{d.target === 'production' && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#7ee0a3' }}>production</span>}</div>
         <div className="d">{fmt(d.date)}{d.sha ? ' · ' + d.sha : ''}</div>
@@ -108,7 +108,7 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
           <div className="pmgroup">Team deployments · by person · live</div>
           <TeamDeployments rows={rows} err={err} />
 
-          <div className="pmhint">Long-press anywhere to reopen · each deploy opens its frozen snapshot</div>
+          <div className="pmhint">Long-press anywhere to reopen · tap a deploy to jump to that version</div>
         </motion.div>
       ]}
     </AnimatePresence>
