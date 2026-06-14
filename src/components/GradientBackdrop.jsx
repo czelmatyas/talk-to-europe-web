@@ -1,0 +1,62 @@
+import { useRef, useEffect } from 'react'
+import { shift, mix, rgba } from '../lib/colors.js'
+
+export default function GradientBackdrop({ palette }) {
+  const cvRef = useRef(null)
+  const cur = useRef({ top: palette[0], mid: palette[1], glow: palette[2] })
+  const target = useRef(null)
+
+  useEffect(() => {
+    target.current = {
+      from: { ...cur.current },
+      to: { top: palette[0], mid: palette[1], glow: palette[2] },
+      t0: performance.now()
+    }
+  }, [palette[0], palette[1], palette[2]])
+
+  useEffect(() => {
+    const cv = cvRef.current, ctx = cv.getContext('2d')
+    const off = document.createElement('canvas'), octx = off.getContext('2d')
+    let dpr = 1, raf = 0
+    const derive = p => ({ cool: shift(p.top, -17, 3), deep: shift(p.glow, 24, 0), warm: mix(p.top, p.glow, .42), baseTop: shift(p.top, 0, 7), baseBot: shift(p.mid, 0, -6) })
+    function resize() {
+      dpr = Math.min(1.7, window.devicePixelRatio || 1)
+      const W = cv.clientWidth || window.innerWidth, H = cv.clientHeight || window.innerHeight
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr)
+      off.width = Math.round(cv.width * 1.26); off.height = Math.round(cv.height * 1.26)
+    }
+    function eblob(c, W, H, x, y, sx, sy, col, a, f) {
+      c.save(); c.translate(x / 100 * W, y / 100 * H); c.scale(sx / 100 * W, sy / 100 * H)
+      const g = c.createRadialGradient(0, 0, 0, 0, 0, 1)
+      g.addColorStop(0, rgba(col, a)); g.addColorStop(f, rgba(col, 0)); g.addColorStop(1, rgba(col, 0))
+      c.fillStyle = g; c.beginPath(); c.arc(0, 0, 1, 0, 7); c.fill(); c.restore()
+    }
+    function frame(now) {
+      const P = cur.current
+      if (target.current) {
+        const k = Math.min(1, (now - target.current.t0) / 900), e = k * k * (3 - 2 * k)
+        P.top = mix(target.current.from.top, target.current.to.top, e)
+        P.mid = mix(target.current.from.mid, target.current.to.mid, e)
+        P.glow = mix(target.current.from.glow, target.current.to.glow, e)
+        if (k >= 1) target.current = null
+      }
+      const D = derive(P), t = now / 1000, W = off.width, H = off.height, a = 2 * Math.sin(t * 0.08), b2 = 2 * Math.cos(t * 0.07)
+      const bg = octx.createLinearGradient(0, 0, 0, H)
+      bg.addColorStop(0, D.baseTop); bg.addColorStop(.5, P.mid); bg.addColorStop(1, D.baseBot)
+      octx.fillStyle = bg; octx.fillRect(0, 0, W, H)
+      eblob(octx, W, H, 37 + a, 58 + b2, 62, 54, D.warm, 0.40, .66)
+      eblob(octx, W, H, 62 - a, 76 + b2 * 0.6, 70, 58, D.deep, 0.50, .68)
+      eblob(octx, W, H, 76 + a, 33 - b2, 54, 46, D.cool, 0.58, .62)
+      eblob(octx, W, H, 27 - a, 24 + b2, 58, 48, P.top, 0.72, .64)
+      eblob(octx, W, H, 50 + a * 0.6, 112, 86, 70, P.glow, 0.92, .66)
+      const bpx = Math.max(8, window.innerHeight * 0.06)
+      ctx.clearRect(0, 0, cv.width, cv.height)
+      ctx.save(); ctx.filter = 'blur(' + bpx + 'px)'; ctx.drawImage(off, -(off.width - cv.width) / 2, -(off.height - cv.height) / 2); ctx.restore()
+      raf = requestAnimationFrame(frame)
+    }
+    resize(); window.addEventListener('resize', resize); raf = requestAnimationFrame(frame)
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
+  }, [])
+
+  return <canvas ref={cvRef} className="backdrop" />
+}
