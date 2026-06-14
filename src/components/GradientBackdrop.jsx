@@ -49,13 +49,15 @@ export default function GradientBackdrop({ palette }) {
       eblob(octx, W, H, 76 + a, 33 - b2, 54, 46, D.cool, 0.58, .62)
       eblob(octx, W, H, 27 - a, 24 + b2, 58, 48, P.top, 0.72, .64)
       eblob(octx, W, H, 50 + a * 0.6, 112, 86, 70, P.glow, 0.92, .66)
-      const bpx = Math.max(8, window.innerHeight * 0.06)
+      const bpx = Math.max(8, (cv.clientHeight || window.innerHeight) * 0.06)
       ctx.clearRect(0, 0, cv.width, cv.height)
       ctx.save(); ctx.filter = 'blur(' + bpx + 'px)'; ctx.drawImage(off, -(off.width - cv.width) / 2, -(off.height - cv.height) / 2); ctx.restore()
       raf = requestAnimationFrame(frame)
     }
-    resize(); window.addEventListener('resize', resize); raf = requestAnimationFrame(frame)
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
+    resize(); window.addEventListener('resize', resize)
+    const ro = new ResizeObserver(resize); ro.observe(cv)
+    raf = requestAnimationFrame(frame)
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); ro.disconnect() }
   }, [])
 
   return <canvas ref={cvRef} className="backdrop" />

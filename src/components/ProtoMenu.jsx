@@ -62,7 +62,7 @@ function DeployRow({ d, current }) {
   )
 }
 
-export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, appVersion }) {
+export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, appVersion, frames = [], frame, setFrame }) {
   const { rows, err } = useDeployments(open)
   const [expanded, setExpanded] = useState({})
 
@@ -89,6 +89,13 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
               <button className="pmx" onClick={onClose}>×</button>
             </div>
           </div>
+
+          {frames.length > 0 && <>
+            <div className="pmgroup">Recording frame</div>
+            <div className="pmframes">
+              {frames.map(fr => <button key={fr.id} className="pmframe" data-on={fr.id === frame ? 1 : 0} onClick={() => setFrame(fr.id)}>{fr.label}</button>)}
+            </div>
+          </>}
 
           {people.map(name => {
             const list = byPerson[name] || []
