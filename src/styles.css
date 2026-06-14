@@ -99,7 +99,9 @@ button,input{font-family:inherit}
 .ctxbar{position:relative;background:#fff;border-radius:30px;padding:20px 22px;box-shadow:0 12px 44px rgba(20,22,40,.13);transition:min-height .5s var(--ease)}
 /* voice mode — the input field itself grows into a white panel with the light-grey 12-star mascot */
 .ctxbar[data-voice="1"]{min-height:min(420px,56vh)}
-.voicelayer{position:absolute;inset:0;z-index:10;background:#fff;border-radius:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;cursor:pointer}
+.composerwrap{position:relative;z-index:50}
+.voiceback{position:absolute;inset:0;z-index:40;cursor:pointer}
+.voicelayer{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;cursor:pointer}
 .starmascot{display:inline-flex;flex:0 0 auto}
 .starmascot svg{width:100%;height:100%;display:block;overflow:visible}
 .starmascot .ms path{fill:#d6d6dd;stroke:#d6d6dd;stroke-width:3.8;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}

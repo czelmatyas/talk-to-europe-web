@@ -73,6 +73,7 @@ export default function Talk({ setPalette, resetPalette }) {
   const started = msgs.length > 0
 
   return <>
+    {voice && <div className="voiceback" onClick={() => endVoice(false)} />}
     <div className="scroll">
       {msgs.map((m, i) => m.role === 'me'
         ? <motion.div key={i} className="bubble me" {...rise}>{m.text}</motion.div>
@@ -88,42 +89,43 @@ export default function Talk({ setPalette, resetPalette }) {
       {CHIPS.map(c => <button key={c} onClick={() => send(c)} style={{ fontSize: 13.5, color: '#fff', background: 'rgba(255,255,255,.16)', backdropFilter: 'blur(10px)', border: 0, padding: '10px 14px', borderRadius: 15, cursor: 'pointer' }}>{c}</button>)}
     </div>}
 
-    <div style={{ padding: '8px 16px 18px' }}>
-      <div className="ctxbar" data-voice={voice ? 1 : 0}>
+    <div className="composerwrap" style={{ padding: '8px 16px 18px' }}>
+      <motion.div className="ctxbar" data-voice={voice ? 1 : 0} layout transition={{ type: 'spring', stiffness: 260, damping: 30 }}>
         {sweep > 0 && <EdgeSweep key={sweep} cols={sweepPal} />}
-        <AnimatePresence>
-          {voice && (
-            <motion.div key="voice" className="voicelayer" onClick={() => endVoice(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .3 }}>
-              <StarMascot size={200} layoutId="eustar" />
-              <motion.div className="vlabel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .25 }}>Listening…</motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: '2px 0 14px' }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Talk to Europe" />
-        <div className="cttoolbar">
-          <div className="avstack">
-            {!voice && <StarAvatar size={36} layoutId="eustar" />}
-            <AnimatePresence initial={false} mode="wait">
-              {country
-                ? <motion.span key="flag" className="flagav" initial={{ opacity: 0, scale: .6, x: -10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: .6, x: -10 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={clearCountry} title={'Remove ' + country[1]}><img src={flagSrc(country[0])} alt={country[1]} /><i className="cornerbadge x"><XMini /></i></motion.span>
-                : <motion.button key="add" className="addav" data-on={picker ? 1 : 0} initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .6 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => setPicker(p => !p)} aria-label="Add country"><Plus /></motion.button>}
-            </AnimatePresence>
+        {!voice ? (
+          <>
+            <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: '2px 0 14px' }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Talk to Europe" />
+            <div className="cttoolbar">
+              <div className="avstack">
+                <StarAvatar size={36} layoutId="eustar" />
+                <AnimatePresence initial={false} mode="wait">
+                  {country
+                    ? <motion.span key="flag" className="flagav" initial={{ opacity: 0, scale: .6, x: -10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: .6, x: -10 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={clearCountry} title={'Remove ' + country[1]}><img src={flagSrc(country[0])} alt={country[1]} /><i className="cornerbadge x"><XMini /></i></motion.span>
+                    : <motion.button key="add" className="addav" data-on={picker ? 1 : 0} initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .6 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => setPicker(p => !p)} aria-label="Add country"><Plus /></motion.button>}
+                </AnimatePresence>
+              </div>
+              <div className="ctxchips">
+                <AnimatePresence initial={false}>
+                  {picker
+                    ? [
+                        <motion.button key={loc[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(loc)} title="Suggested from your location"><span className="flagwrap"><img className="pchipflag" src={flagSrc(loc[0])} alt="" /><i className="cornerbadge star"><StarMini /></i></span>{loc[1]}</motion.button>,
+                        ...ALL.filter(c => c[0] !== loc[0]).map(c => <motion.button key={c[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)
+                      ]
+                    : sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)}
+                </AnimatePresence>
+              </div>
+              {val.trim()
+                ? <button className="send" onClick={() => send()}><SendIco /></button>
+                : <button className="send mic" onClick={() => { setPicker(false); setVoice(true) }} aria-label="Talk by voice"><MicIco /></button>}
+            </div>
+          </>
+        ) : (
+          <div className="voicelayer" onClick={() => endVoice(false)}>
+            <StarMascot size={200} layoutId="eustar" />
+            <motion.div className="vlabel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .25 }}>Listening…</motion.div>
           </div>
-          <div className="ctxchips">
-            <AnimatePresence initial={false}>
-              {picker
-                ? [
-                    <motion.button key={loc[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(loc)} title="Suggested from your location"><span className="flagwrap"><img className="pchipflag" src={flagSrc(loc[0])} alt="" /><i className="cornerbadge star"><StarMini /></i></span>{loc[1]}</motion.button>,
-                    ...ALL.filter(c => c[0] !== loc[0]).map(c => <motion.button key={c[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)
-                  ]
-                : sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)}
-            </AnimatePresence>
-          </div>
-          {val.trim()
-            ? <button className="send" onClick={() => send()}><SendIco /></button>
-            : <button className="send mic" onClick={() => setVoice(true)} aria-label="Talk by voice"><MicIco /></button>}
-        </div>
-      </div>
+        )}
+      </motion.div>
     </div>
   </>
 }
