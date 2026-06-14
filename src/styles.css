@@ -110,12 +110,10 @@ button,input{font-family:inherit}
 /* proto menu — Apple light "liquid glass": near-white tinted material, heavy blur + saturation */
 .pmback{position:fixed;inset:0;z-index:90;background:rgba(20,24,45,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .pmsheet{position:fixed;left:0;right:0;margin:0 auto;bottom:0;width:100%;max-width:var(--panel);z-index:91;max-height:82%;overflow-y:auto;
-  background:rgba(250,250,253,.72);
-  backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);
-  color:#1b1e28;
-  border:.5px solid rgba(255,255,255,.7);border-bottom:0;
+  background:#fff;color:#1b1e28;
+  border:.5px solid rgba(15,20,45,.08);border-bottom:0;
   border-radius:26px 26px 0 0;padding:14px 16px 24px;
-  box-shadow:0 -14px 60px rgba(15,20,45,.22), inset 0 1px 0 rgba(255,255,255,.9)}
+  box-shadow:0 -14px 60px rgba(15,20,45,.18)}
 .pmsheet::-webkit-scrollbar{width:0}
 .pmtop{display:flex;align-items:center;justify-content:space-between;margin:4px 4px 14px}
 .pmtop h2{font-size:16px;font-weight:600;margin:0;letter-spacing:-.01em}
@@ -124,8 +122,8 @@ button,input{font-family:inherit}
 .pmx:hover{background:rgba(10,15,40,.1)}
 .pmgroup{margin:14px 4px 6px;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#9094a6}
 .pmsub{margin:12px 6px 6px;font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;color:#a3a7b6}
-.pmrow{display:flex;align-items:center;gap:12px;padding:12px;border-radius:15px;cursor:pointer;background:rgba(255,255,255,.55);margin-bottom:8px;border:.5px solid rgba(255,255,255,.7);box-shadow:0 1px 3px rgba(15,20,45,.05)}
-.pmrow:hover{background:rgba(255,255,255,.92)}
+.pmrow{display:flex;align-items:center;gap:12px;padding:12px;border-radius:15px;cursor:pointer;background:#f4f5f8;margin-bottom:8px;border:.5px solid transparent}
+.pmrow:hover{background:#eceef3}
 .pmrow[data-on="1"]{border-color:rgba(70,110,255,.45);background:rgba(110,140,255,.16)}
 .pmrow .t{font-size:15px;font-weight:500;color:#1b1e28}
 .pmrow .d{font-size:11.5px;color:#8186a0;font-family:ui-monospace,Menlo,monospace;margin-top:2px}

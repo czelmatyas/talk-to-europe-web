@@ -41,7 +41,7 @@ function ProtoRow({ p, active, onSelect }) {
     <div className="pmrow" data-on={active ? 1 : 0} onClick={() => onSelect(p.id)}>
       <div>
         <div className="t">{p.title}</div>
-        <div className="d">{[p.slot, p.updated].filter(Boolean).join(' · ')}</div>
+        <div className="d">{p.desc || p.slot || ''}</div>
       </div>
       <span className="vtag">v{p.version}</span>
     </div>
@@ -107,7 +107,9 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
                   {list.length > 0 && <span className="cnt">{list.length} {list.length === 1 ? 'deploy' : 'deploys'}</span>}
                 </div>
 
+                {isCurrent && <div className="pmsub">Flows</div>}
                 {isCurrent && protos.map(p => <ProtoRow key={p.id} p={p} active={p.id === activeId} onSelect={onSelect} />)}
+                {(list.length > 0 || (isCurrent && (err || !rows))) && <div className="pmsub">History</div>}
                 {isCurrent && err && <div className="d" style={{ padding: '2px 12px 8px', color: '#b4690e' }}>{err}</div>}
                 {isCurrent && !rows && !err && <div className="d" style={{ padding: '2px 12px 8px' }}>Loading deployments…</div>}
                 {shown.map((d, i) => <DeployRow key={d.url || i} d={d} current={d.url === currentUrl} />)}
