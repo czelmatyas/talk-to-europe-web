@@ -34,7 +34,7 @@ export default function GradientEditor({ open, onClose, palette, setPalette, res
           </div>
 
           <div className="pmsub">Style</div>
-          <Slider label="Grain" min={0} max={1.6} step={.05} value={grain} onChange={setGrain} fmt={v => Math.round(v * 100) + '%'} />
+          <Slider label="Grain" min={0} max={0.45} step={.01} value={grain} onChange={setGrain} fmt={v => Math.round(v * 100) + '%'} />
           <Slider label="Liveliness" min={0} max={2} step={.05} value={mo} onChange={setMotion} fmt={v => v.toFixed(2) + '×'} />
           <Slider label="Softness" min={.4} max={1.8} step={.05} value={blur} onChange={setBlur} fmt={v => v.toFixed(2) + '×'} />
         </motion.div>

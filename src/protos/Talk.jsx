@@ -54,7 +54,6 @@ export default function Talk({ setPalette, resetPalette }) {
   const started = msgs.length > 0
 
   return <>
-    <div className="ttehead"><div className="brand">Talk to Europe</div></div>
     <div className="scroll">
       {!started && <div className="intro"><h1>Ask Europe anything.</h1><p>Your rights, your options, what the EU actually does — in plain language.</p></div>}
       {msgs.map((m, i) => m.role === 'me'
@@ -74,7 +73,7 @@ export default function Talk({ setPalette, resetPalette }) {
     <div style={{ padding: '8px 16px 18px' }}>
       <div className="ctxbar">
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: 0, flex: 1 }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Ask Europe a question…" />
+          <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: 0, flex: 1 }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Talk to Europe" />
           {val.trim()
             ? <button className="send" onClick={() => send()}><SendIco /></button>
             : <button className="send mic" onClick={() => setVoice(true)} aria-label="Talk by voice"><MicIco /></button>}

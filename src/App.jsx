@@ -19,7 +19,7 @@ const FRAMES = [
 ]
 
 function noiseURL() {
-  const s = "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(#n)' opacity='0.12'/></svg>"
+  const s = "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>"
   return 'url("data:image/svg+xml,' + encodeURIComponent(s) + '")'
 }
 
@@ -29,7 +29,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [toast, setToast] = useState('')
   const [frameId, setFrameId] = useState('agnostic')
-  const [grainAmt, setGrainAmt] = useState(1)
+  const [grainAmt, setGrainAmt] = useState(0.12)
   const [gMotion, setGMotion] = useState(1)
   const [gBlur, setGBlur] = useState(1)
   const [gradientOpen, setGradientOpen] = useState(false)
@@ -82,7 +82,16 @@ export default function App() {
             <Comp setPalette={setPalette} resetPalette={resetPalette} />
           </motion.div>
         </AnimatePresence>
-        {edgeRun > 0 && <div className="edgerun" key={edgeRun} />}
+        {edgeRun > 0 && (
+          <svg className="edgerun" key={edgeRun} viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="esg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#7de3ff" /><stop offset="0.5" stopColor="#b39dff" /><stop offset="1" stopColor="#ff9ecb" />
+              </linearGradient>
+            </defs>
+            <rect x="0.6" y="0.6" width="98.8" height="98.8" rx="1.5" fill="none" stroke="url(#esg)" strokeWidth="3.5" pathLength="100" strokeDasharray="26 74" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          </svg>
+        )}
         <AnimatePresence>{toast && <motion.div key="t" className="toast" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{toast}</motion.div>}</AnimatePresence>
       </div>
       <ProtoMenu open={menuOpen} protos={PROTOS} activeId={activeId} onSelect={select} onClose={() => setMenuOpen(false)} appVersion={APP_VERSION} frames={FRAMES} frame={frameId} setFrame={setFrameId} onOpenGradient={() => { setMenuOpen(false); setGradientOpen(true) }} onRestart={restart} />

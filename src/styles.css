@@ -15,14 +15,10 @@ button,input{font-family:inherit}
 .frame{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#0b1030}
 .frame[data-fixed="1"]{aspect-ratio:var(--ar);height:min(100%, calc(100vw / var(--ar)));width:auto;max-width:100%}
 
-/* edge sweep — a soft iridescent stroke runs around the frame once on country-layer change */
-@property --edge-a{syntax:'<angle>';inherits:false;initial-value:0deg}
-.edgerun{position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:inherit;padding:3px;
-  background:conic-gradient(from var(--edge-a), transparent 288deg, #7de3ff 312deg, #b39dff 330deg, #ff9ecb 344deg, #ffffff 352deg, transparent 360deg);
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;
-  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);mask-composite:exclude;
-  filter:blur(6px);animation:edgerun 1.35s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes edgerun{0%{--edge-a:0deg;opacity:0}12%{opacity:1}82%{opacity:1}100%{--edge-a:360deg;opacity:0}}
+/* edge sweep — an iridescent comet traces the frame edge once on country-layer change */
+.edgerun{position:absolute;inset:0;z-index:8;pointer-events:none;width:100%;height:100%;overflow:visible;filter:blur(3px)}
+.edgerun rect{animation:edgedash 1.4s cubic-bezier(.45,0,.2,1) forwards}
+@keyframes edgedash{0%{stroke-dashoffset:100;opacity:0}10%{opacity:1}86%{opacity:1}100%{stroke-dashoffset:0;opacity:0}}
 
 /* backdrop fills the frame; negative z keeps it behind the (static) content so modals can anchor to the frame */
 .backdrop{position:absolute;inset:0;width:100%;height:100%;z-index:-2;display:block}

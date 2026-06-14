@@ -44,7 +44,7 @@ export default function GradientBackdrop({ palette, motion = 1, blur = 1 }) {
         P.glow = mix(target.current.from.glow, target.current.to.glow, e)
         if (k >= 1) target.current = null
       }
-      const m = motionR.current, D = derive(P), t = now / 1000, W = off.width, H = off.height, a = 2 * m * Math.sin(t * 0.08), b2 = 2 * m * Math.cos(t * 0.07)
+      const m = motionR.current, D = derive(P), t = now / 1000, W = off.width, H = off.height, a = 4.5 * m * Math.sin(t * 0.10), b2 = 4.5 * m * Math.cos(t * 0.085)
       const bg = octx.createLinearGradient(0, 0, 0, H)
       bg.addColorStop(0, D.baseTop); bg.addColorStop(.5, P.mid); bg.addColorStop(1, D.baseBot)
       octx.fillStyle = bg; octx.fillRect(0, 0, W, H)
