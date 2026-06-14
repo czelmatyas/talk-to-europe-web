@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 
 const STARP = 'M0,-7L1.65,-2.27 6.66,-2.16 2.69,1.38 4.11,6.66 0,3.5 -4.11,6.66 -2.69,1.38 -6.66,-2.16 -1.65,-2.27Z'
 const N = 6, STEP = (Math.PI * 2) / N, R = 60, CY = 110, T = 1.6 // seconds per star-to-centre segment
-const smooth = x => x * x * (3 - 2 * x) // ease-in-out → dwells (slows) at segment ends = when a star is centred
+const smooth = x => x * x * x * (x * (x * 6 - 15) + 10) // smootherstep: flatter velocity at BOTH ends → eases in and out symmetrically
 
 // EU flag avatar: gold stars orbiting on a blue field, masked to a circle.
 export default function StarAvatar({ size = 36 }) {

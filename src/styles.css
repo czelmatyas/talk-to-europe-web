@@ -98,8 +98,8 @@ button,input{font-family:inherit}
 .ctxwrap{margin:auto;width:100%;padding:0 16px}
 .ctxbar{position:relative;background:#fff;border-radius:30px;padding:20px 22px;box-shadow:0 12px 44px rgba(20,22,40,.13)}
 .ctxinput{display:block;width:100%;border:0;background:transparent;outline:none;font-size:22px;font-weight:500;color:var(--ink);caret-color:var(--cta);height:30px;margin:2px 0 16px;padding:0}
-.cttoolbar{display:flex;align-items:center;gap:10px}
-.ctxchips{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;padding:2px 0}
+.cttoolbar{display:flex;align-items:center;gap:10px;min-height:40px}
+.ctxchips{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
 .ctxchips::-webkit-scrollbar{display:none}
 .ctxchips .add{width:40px;height:40px;border-radius:12px;background:var(--fill);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
 /* avatar stack: blue star CTA + chosen country flag, overlapping like LISA avatars */
@@ -108,7 +108,7 @@ button,input{font-family:inherit}
 .flagav{width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #fff;cursor:pointer;position:relative;z-index:2}
 .flagav img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
 .addav{width:36px;height:36px;border-radius:50%;background:var(--fill);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px #fff;position:relative;z-index:3}
-.addav[data-on="1"]{background:rgba(42,39,242,.12)}
+.addav[data-on="1"]{background:#e6e6ef}
 .cornerbadge.star{box-shadow:0 0 0 1.5px rgba(20,22,40,.12)}
 .pchipflag{width:20px;height:20px;border-radius:50%;object-fit:cover;display:block}
 .flagwrap{position:relative;display:inline-flex;align-items:center}
