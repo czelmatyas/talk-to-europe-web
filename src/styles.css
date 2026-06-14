@@ -18,10 +18,13 @@ button,input{font-family:inherit}
 .frame{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#0b1030}
 .frame[data-fixed="1"]{aspect-ratio:var(--ar);height:min(100%, calc(100vw / var(--ar)));width:auto;max-width:100%}
 
-/* edge sweep — an iridescent comet traces the frame edge once on country-layer change */
-.edgerun{position:absolute;inset:0;z-index:8;pointer-events:none;width:100%;height:100%;overflow:visible;filter:blur(3px)}
-.edgerun rect{animation:edgedash 1.4s cubic-bezier(.45,0,.2,1) forwards}
-@keyframes edgedash{0%{stroke-dashoffset:100;opacity:0}10%{opacity:1}86%{opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+/* edge sweep — a flowing gradient border (target palette) runs around the field once */
+@property --ea{syntax:'<angle>';inherits:false;initial-value:0deg}
+.edgerun{position:absolute;inset:0;z-index:6;pointer-events:none;padding:4px;
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);mask-composite:exclude;
+  filter:blur(3px);animation:edgespin 1.5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes edgespin{0%{--ea:0deg;opacity:0}14%{opacity:1}80%{opacity:1}100%{--ea:360deg;opacity:0}}
 
 /* backdrop fills the frame; negative z keeps it behind the (static) content so modals can anchor to the frame */
 .backdrop{position:absolute;inset:0;width:100%;height:100%;z-index:-2;display:block}
@@ -103,6 +106,8 @@ button,input{font-family:inherit}
 .flagav img{width:100%;height:100%;object-fit:cover;display:block}
 .addav{width:36px;height:36px;border-radius:50%;background:var(--fill);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px #fff;position:relative;z-index:3}
 .pchipflag{width:20px;height:20px;border-radius:50%;object-fit:cover;display:block}
+.flagwrap{position:relative;display:inline-flex;align-items:center}
+.aistar{position:absolute;top:-5px;right:-5px;font-size:10px;line-height:1;color:var(--cta);text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 2px #fff}
 .ctxchip{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 14px;font-size:14px;font-weight:500;color:var(--ink);background:var(--fill);border-radius:999px;flex:0 0 auto;border:0;cursor:default}
 .ctxchip.flagc{background:var(--acc-bg);color:var(--acc)}
 .ctxchip.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink2);cursor:pointer}

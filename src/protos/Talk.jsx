@@ -3,21 +3,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import StarAvatar from '../components/StarAvatar.jsx'
 import { COUNTRIES } from '../lib/palettes.js'
 
-// Iridescent comet that traces the composer's own rounded edge (measured in real px so corners are correct).
-function EdgeSweep({ radius = 26, cols }) {
-  const ref = useRef(null)
-  const [d, setD] = useState({ w: 0, h: 0 })
-  useLayoutEffect(() => {
-    const el = ref.current?.parentElement
-    if (el) { const r = el.getBoundingClientRect(); setD({ w: Math.round(r.width), h: Math.round(r.height) }) }
-  }, [])
+// Google-style flowing gradient border: a conic gradient in the target palette runs around the field once.
+function EdgeSweep({ cols, radius = 28 }) {
   const [c0, c1, c2] = cols && cols.length === 3 ? cols : ['#7de3ff', '#b39dff', '#ff9ecb']
-  return (
-    <svg ref={ref} className="edgerun" viewBox={`0 0 ${d.w || 1} ${d.h || 1}`} preserveAspectRatio="none">
-      <defs><linearGradient id="esg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor={c0} /><stop offset="0.5" stopColor={c1} /><stop offset="1" stopColor={c2} /></linearGradient></defs>
-      {d.w > 0 && <rect x="2" y="2" width={d.w - 4} height={d.h - 4} rx={radius} fill="none" stroke="url(#esg)" strokeWidth="3.5" pathLength="100" strokeDasharray="26 74" strokeLinecap="round" />}
-    </svg>
-  )
+  const bg = `conic-gradient(from var(--ea), ${c0}, ${c1}, ${c2}, ${c0}, ${c1}, ${c2}, ${c0})`
+  return <div className="edgerun" style={{ background: bg, borderRadius: radius }} />
 }
 
 // Merged flow: Home (ask anything) + Talk (the answer) + Context (your country) as one conversation.
@@ -38,6 +28,7 @@ const MicIco = () => <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
 
 const CHIPS = ['My train was delayed', 'Is this true?', 'Health cover abroad', 'Working in another country']
 const flagSrc = code => 'https://cdn.jsdelivr.net/gh/HatScripts/circle-flags/flags/' + code.toLowerCase() + '.svg'
+const AiStar = () => <i className="aistar">★</i>
 
 export default function Talk({ setPalette, resetPalette }) {
   const [msgs, setMsgs] = useState([])
@@ -48,6 +39,7 @@ export default function Talk({ setPalette, resetPalette }) {
   const [sweep, setSweep] = useState(0)
   const [sweepPal, setSweepPal] = useState(null)
   const ALL = [...COUNTRIES].sort((a, b) => a[1].localeCompare(b[1]))
+  const loc = COUNTRIES.find(c => c[0] === 'HU') // location-based default suggestion (stubbed to Hungary)
 
   function reply(text) {
     const t = text.toLowerCase()
@@ -105,11 +97,12 @@ export default function Talk({ setPalette, resetPalette }) {
             </AnimatePresence>
             <button className="addav" onClick={() => setPicker(p => !p)} aria-label="Add country"><Plus /></button>
           </div>
-          {!picker && <span className="ctxchip"><Tick /> EU ID</span>}
           <AnimatePresence initial={false}>
             {picker
               ? ALL.map(c => <motion.button key={c[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)
-              : sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)}
+              : sugg.length
+                ? sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)
+                : (!country && loc && <motion.button key="loc" className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(loc)} title="Suggested from your location"><span className="flagwrap"><img className="pchipflag" src={flagSrc(loc[0])} alt="" /><AiStar /></span>{loc[1]}</motion.button>)}
           </AnimatePresence>
         </div>
       </div>
