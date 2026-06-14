@@ -89,8 +89,16 @@ export default function Talk({ setPalette, resetPalette }) {
     </div>}
 
     <div style={{ padding: '8px 16px 18px' }}>
-      <div className="ctxbar">
+      <div className="ctxbar" data-voice={voice ? 1 : 0}>
         {sweep > 0 && <EdgeSweep key={sweep} cols={sweepPal} />}
+        <AnimatePresence>
+          {voice && (
+            <motion.div key="voice" className="voicelayer" onClick={() => endVoice(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .3 }}>
+              <motion.div initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 240, damping: 24, delay: .06 }}><StarMascot size={200} /></motion.div>
+              <motion.div className="vlabel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .2 }}>Listening…</motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: '2px 0 14px' }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Talk to Europe" />
         <div className="cttoolbar">
           <div className="avstack">
@@ -117,14 +125,5 @@ export default function Talk({ setPalette, resetPalette }) {
         </div>
       </div>
     </div>
-
-    <AnimatePresence>
-      {voice && (
-        <motion.div key="voice" className="voiceoverlay" onClick={() => endVoice(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .4, ease: [0.22, 0.61, 0.36, 1] }}>
-          <motion.div initial={{ opacity: 0, scale: .55 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 240, damping: 24, delay: .08 }}><StarMascot size={230} /></motion.div>
-          <motion.div className="vlabel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .25 }}>Listening…</motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
   </>
 }

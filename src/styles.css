@@ -96,17 +96,14 @@ button,input{font-family:inherit}
 
 /* context composer */
 .ctxwrap{margin:auto;width:100%;padding:0 16px}
-.ctxbar{position:relative;background:#fff;border-radius:30px;padding:20px 22px;box-shadow:0 12px 44px rgba(20,22,40,.13)}
-/* voice mode — the whole frame washes to white with a light-grey 12-star mascot */
-.voiceoverlay{position:absolute;inset:0;z-index:60;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+.ctxbar{position:relative;background:#fff;border-radius:30px;padding:20px 22px;box-shadow:0 12px 44px rgba(20,22,40,.13);transition:min-height .5s var(--ease)}
+/* voice mode — the input field itself grows into a white panel with the light-grey 12-star mascot */
+.ctxbar[data-voice="1"]{min-height:min(420px,56vh)}
+.voicelayer{position:absolute;inset:0;z-index:10;background:#fff;border-radius:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;cursor:pointer}
 .starmascot{display:inline-flex;flex:0 0 auto}
 .starmascot svg{width:100%;height:100%;display:block;overflow:visible}
-.starmascot .ms path{fill:#d6d6dd;stroke:#d6d6dd;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.starmascot .ms path{fill:#d6d6dd;stroke:#d6d6dd;stroke-width:3.8;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .vlabel{color:var(--ink2);font-size:17px;font-weight:500}
-.vbtns{display:flex;gap:16px}
-.vcancel,.vok{width:54px;height:54px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.vcancel{background:var(--fill)}
-.vok{background:var(--black)}
 .ctxinput{display:block;width:100%;border:0;background:transparent;outline:none;font-size:22px;font-weight:500;color:var(--ink);caret-color:var(--cta);height:30px;margin:2px 0 16px;padding:0}
 .cttoolbar{display:flex;align-items:center;gap:10px;min-height:40px}
 .ctxchips{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}

@@ -11,17 +11,13 @@ export default function StarMascot({ size = 230 }) {
     let raf = 0
     function tick(now) {
       const t = now / 1000
-      // fake "voice envelope": slow swelling amplitude
-      const env = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(t * 2.1)) * (0.6 + 0.4 * Math.sin(t * 0.8 + 1))
-      const R = 32 + 3.5 * Math.sin(t * 1.7)
-      const rot = t * 0.16
+      const rot = t * 0.28               // gentle circular movement
+      const breathe = 1 + 0.05 * Math.sin(t * 1.5)  // slight pulse
+      const R = 32
       for (let i = 0; i < N; i++) {
-        const ph = (i / N) * TAU
-        const pulse = 0.65 + 0.5 * Math.max(0, Math.sin(t * 2.6 - ph))   // travelling crest
-        const k = (0.7 + 0.55 * env) * pulse
-        const cx = 50 + R * Math.sin(ph + rot), cy = 50 - R * Math.cos(ph + rot)
-        stars[i].setAttribute('transform', 'translate(' + cx.toFixed(2) + ',' + cy.toFixed(2) + ') scale(' + k.toFixed(3) + ')')
-        stars[i].setAttribute('opacity', (0.7 + 0.3 * pulse).toFixed(3))
+        const ph = (i / N) * TAU + rot
+        const cx = 50 + R * Math.sin(ph), cy = 50 - R * Math.cos(ph)
+        stars[i].setAttribute('transform', 'translate(' + cx.toFixed(2) + ',' + cy.toFixed(2) + ') scale(' + breathe.toFixed(3) + ')')
       }
       raf = requestAnimationFrame(tick)
     }
