@@ -25,7 +25,7 @@ export default function StarAvatar({ size = 36 }) {
   const stars = []
   for (let i = 0; i < N; i++) stars.push(<g className="s" key={i} transform="translate(50,50)"><path d={STARP} transform="scale(2.6)" /></g>)
   return (
-    <span className="staravatar" style={{ width: size, height: size }}>
+    <span className="staravatar" ref={ref} style={{ width: size, height: size }}>
       <svg viewBox="0 0 100 100"><g className="ring">{stars}</g></svg>
     </span>
   )
