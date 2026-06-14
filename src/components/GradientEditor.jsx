@@ -23,9 +23,8 @@ export default function GradientEditor({ open, onClose, palette, setPalette, res
   const isEU = palette[0] === EU[0] && palette[2] === EU[2]
   return (
     <AnimatePresence>
-      {open && [
-        <motion.div key="b" className="geback" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .2 }} onClick={onClose} />,
-        <motion.div key="s" className="gesheet" initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', stiffness: 440, damping: 42 }}>
+      {open && (
+        <motion.div key="s" className="gesheet" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 440, damping: 42 }}>
           <div className="pmtop"><h2>Gradient</h2><button className="pmx" onClick={onClose}>×</button></div>
 
           <div className="pmsub">Palette</div>
@@ -39,7 +38,7 @@ export default function GradientEditor({ open, onClose, palette, setPalette, res
           <Slider label="Liveliness" min={0} max={2} step={.05} value={mo} onChange={setMotion} fmt={v => v.toFixed(2) + '×'} />
           <Slider label="Softness" min={.4} max={1.8} step={.05} value={blur} onChange={setBlur} fmt={v => v.toFixed(2) + '×'} />
         </motion.div>
-      ]}
+      )}
     </AnimatePresence>
   )
 }

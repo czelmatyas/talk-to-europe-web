@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import GradientBackdrop from './components/GradientBackdrop.jsx'
 import GradientEditor from './components/GradientEditor.jsx'
@@ -33,8 +33,19 @@ export default function App() {
   const [gMotion, setGMotion] = useState(1)
   const [gBlur, setGBlur] = useState(1)
   const [gradientOpen, setGradientOpen] = useState(false)
+  const [edgeRun, setEdgeRun] = useState(0)
+  const [resetKey, setResetKey] = useState(0)
   const grainURL = useMemo(noiseURL, [])
   const lp = useRef(null), pt = useRef({ x: 0, y: 0 })
+  const firstPal = useRef(true)
+
+  // run the edge sweep whenever the palette (country layer) changes — skip the first paint
+  useEffect(() => {
+    if (firstPal.current) { firstPal.current = false; return }
+    setEdgeRun(k => k + 1)
+  }, [palette[0], palette[1], palette[2]])
+
+  function restart() { setMenuOpen(false); setResetKey(k => k + 1); resetPalette() }
 
   const setPalette = (t, m, g) => setPaletteState([t, m, g])
   const resetPalette = () => setPaletteState(EU)
@@ -67,13 +78,14 @@ export default function App() {
         <GradientBackdrop palette={palette} motion={gMotion} blur={gBlur} />
         <div className="grain" style={{ background: grainURL, backgroundSize: '200px 200px', opacity: grainAmt }} />
         <AnimatePresence mode="wait">
-          <motion.div key={activeId} className="col" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .3 }}>
+          <motion.div key={activeId + '-' + resetKey} className="col" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .3 }}>
             <Comp setPalette={setPalette} resetPalette={resetPalette} />
           </motion.div>
         </AnimatePresence>
+        {edgeRun > 0 && <div className="edgerun" key={edgeRun} />}
         <AnimatePresence>{toast && <motion.div key="t" className="toast" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{toast}</motion.div>}</AnimatePresence>
       </div>
-      <ProtoMenu open={menuOpen} protos={PROTOS} activeId={activeId} onSelect={select} onClose={() => setMenuOpen(false)} appVersion={APP_VERSION} frames={FRAMES} frame={frameId} setFrame={setFrameId} onOpenGradient={() => { setMenuOpen(false); setGradientOpen(true) }} />
+      <ProtoMenu open={menuOpen} protos={PROTOS} activeId={activeId} onSelect={select} onClose={() => setMenuOpen(false)} appVersion={APP_VERSION} frames={FRAMES} frame={frameId} setFrame={setFrameId} onOpenGradient={() => { setMenuOpen(false); setGradientOpen(true) }} onRestart={restart} />
       <GradientEditor open={gradientOpen} onClose={() => setGradientOpen(false)} palette={palette} setPalette={setPalette} resetPalette={resetPalette} grain={grainAmt} setGrain={setGrainAmt} motion={gMotion} setMotion={setGMotion} blur={gBlur} setBlur={setGBlur} />
     </div>
   )

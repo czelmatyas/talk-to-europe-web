@@ -17,7 +17,7 @@ const Tick = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" s
 const CheckBlue = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56f0" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
 const SearchIco = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a8d97" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" /></svg>
 const SendIco = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
-const MicIco = () => <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
+const MicIco = () => <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2a3050" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
 
 const CHIPS = ['My train was delayed', 'Is this true?', 'Health cover abroad', 'Working in another country']
 
@@ -77,7 +77,7 @@ export default function Talk({ setPalette, resetPalette }) {
           <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: 0, flex: 1 }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Ask Europe a question…" />
           {val.trim()
             ? <button className="send" onClick={() => send()}><SendIco /></button>
-            : <button className="send" onClick={() => setVoice(true)} aria-label="Talk by voice"><MicIco /></button>}
+            : <button className="send mic" onClick={() => setVoice(true)} aria-label="Talk by voice"><MicIco /></button>}
         </div>
         <div className="ctxchips" style={{ marginTop: 14 }}>
           <StarAvatar size={40} />

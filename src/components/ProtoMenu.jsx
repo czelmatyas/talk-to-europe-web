@@ -62,7 +62,7 @@ function DeployRow({ d, current }) {
   )
 }
 
-export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, appVersion, frames = [], frame, setFrame, onOpenGradient }) {
+export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, appVersion, frames = [], frame, setFrame, onOpenGradient, onRestart }) {
   const { rows, err } = useDeployments(open)
   const [expanded, setExpanded] = useState({})
 
@@ -98,6 +98,7 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
           </>}
 
           {onOpenGradient && <button className="pmmore" style={{ marginTop: 4 }} onClick={onOpenGradient}>Edit gradient style…</button>}
+          {onRestart && <button className="pmmore" onClick={onRestart}>↻ Restart prototype</button>}
 
           {people.map(name => {
             const list = byPerson[name] || []
