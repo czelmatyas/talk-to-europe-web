@@ -94,15 +94,15 @@ export default function Talk({ setPalette, resetPalette }) {
         <AnimatePresence>
           {voice && (
             <motion.div key="voice" className="voicelayer" onClick={() => endVoice(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .3 }}>
-              <motion.div initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 240, damping: 24, delay: .06 }}><StarMascot size={200} /></motion.div>
-              <motion.div className="vlabel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .2 }}>Listening…</motion.div>
+              <StarMascot size={200} layoutId="eustar" />
+              <motion.div className="vlabel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .25 }}>Listening…</motion.div>
             </motion.div>
           )}
         </AnimatePresence>
         <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: '2px 0 14px' }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Talk to Europe" />
         <div className="cttoolbar">
           <div className="avstack">
-            <StarAvatar size={36} />
+            {!voice && <StarAvatar size={36} layoutId="eustar" />}
             <AnimatePresence initial={false} mode="wait">
               {country
                 ? <motion.span key="flag" className="flagav" initial={{ opacity: 0, scale: .6, x: -10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: .6, x: -10 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={clearCountry} title={'Remove ' + country[1]}><img src={flagSrc(country[0])} alt={country[1]} /><i className="cornerbadge x"><XMini /></i></motion.span>
