@@ -1,7 +1,23 @@
-import { useState } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import StarAvatar from '../components/StarAvatar.jsx'
 import { COUNTRIES } from '../lib/palettes.js'
+
+// Iridescent comet that traces the composer's own rounded edge (measured in real px so corners are correct).
+function EdgeSweep({ radius = 26 }) {
+  const ref = useRef(null)
+  const [d, setD] = useState({ w: 0, h: 0 })
+  useLayoutEffect(() => {
+    const el = ref.current?.parentElement
+    if (el) { const r = el.getBoundingClientRect(); setD({ w: Math.round(r.width), h: Math.round(r.height) }) }
+  }, [])
+  return (
+    <svg ref={ref} className="edgerun" viewBox={`0 0 ${d.w || 1} ${d.h || 1}`} preserveAspectRatio="none">
+      <defs><linearGradient id="esg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#7de3ff" /><stop offset="0.5" stopColor="#b39dff" /><stop offset="1" stopColor="#ff9ecb" /></linearGradient></defs>
+      {d.w > 0 && <rect x="2" y="2" width={d.w - 4} height={d.h - 4} rx={radius} fill="none" stroke="url(#esg)" strokeWidth="3.5" pathLength="100" strokeDasharray="26 74" strokeLinecap="round" />}
+    </svg>
+  )
+}
 
 // Merged flow: Home (ask anything) + Talk (the answer) + Context (your country) as one conversation.
 const rise = { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { type: 'spring', stiffness: 420, damping: 34 } }
@@ -20,6 +36,7 @@ const SendIco = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none
 const MicIco = () => <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2a3050" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
 
 const CHIPS = ['My train was delayed', 'Is this true?', 'Health cover abroad', 'Working in another country']
+const flagSrc = code => 'https://cdn.jsdelivr.net/gh/HatScripts/circle-flags/flags/' + code.toLowerCase() + '.svg'
 
 export default function Talk({ setPalette, resetPalette }) {
   const [msgs, setMsgs] = useState([])
@@ -28,6 +45,7 @@ export default function Talk({ setPalette, resetPalette }) {
   const [modal, setModal] = useState(false)
   const [q, setQ] = useState('')
   const [voice, setVoice] = useState(false)
+  const [sweep, setSweep] = useState(0)
 
   function reply(text) {
     const t = text.toLowerCase()
@@ -40,7 +58,7 @@ export default function Talk({ setPalette, resetPalette }) {
     }, 620)
   }
   function send(text) { text = (text || val).trim(); if (!text) return; setMsgs(m => [...m, { role: 'me', text }]); setVal(''); reply(text) }
-  function applyCountry(c) { setCountry(c); setPalette(c[3][0], c[3][1], c[3][2]); setModal(false); setQ(''); setVal('') }
+  function applyCountry(c) { setCountry(c); setPalette(c[3][0], c[3][1], c[3][2]); setModal(false); setQ(''); setVal(''); setSweep(s => s + 1) }
   function clearCountry() { setCountry(null); resetPalette() }
   // live country watcher on the text field — type a country name to surface suggestions
   const sugg = (() => {
@@ -71,6 +89,7 @@ export default function Talk({ setPalette, resetPalette }) {
 
     <div style={{ padding: '8px 16px 18px' }}>
       <div className="ctxbar">
+        {sweep > 0 && <EdgeSweep key={sweep} />}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: 0, flex: 1 }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Talk to Europe" />
           {val.trim()
@@ -81,7 +100,7 @@ export default function Talk({ setPalette, resetPalette }) {
           <div className="avstack">
             <StarAvatar size={36} />
             <AnimatePresence>
-              {country && <motion.span key={country[0]} className="flagav" initial={{ opacity: 0, scale: .6, x: -10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: .6, x: -10 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={clearCountry} title={'Clear ' + country[1]}>{country[2]}</motion.span>}
+              {country && <motion.span key={country[0]} className="flagav" initial={{ opacity: 0, scale: .6, x: -10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: .6, x: -10 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={clearCountry} title={'Clear ' + country[1]}><img src={flagSrc(country[0])} alt={country[1]} /></motion.span>}
             </AnimatePresence>
           </div>
           <button className="add" onClick={() => setModal(true)}><Plus /></button>

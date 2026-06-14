@@ -99,7 +99,8 @@ button,input{font-family:inherit}
 /* avatar stack: blue star CTA + chosen country flag, overlapping like LISA avatars */
 .avstack{display:inline-flex;align-items:center;flex:0 0 auto}
 .avstack>*+*{margin-left:-12px}
-.flagav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;background:#fff;box-shadow:0 0 0 3px #fff;cursor:pointer;position:relative;z-index:2}
+.flagav{width:36px;height:36px;border-radius:50%;overflow:hidden;background:#fff;box-shadow:0 0 0 3px #fff;cursor:pointer;position:relative;z-index:2}
+.flagav img{width:100%;height:100%;object-fit:cover;display:block}
 .ctxchip{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 14px;font-size:14px;font-weight:500;color:var(--ink);background:var(--fill);border-radius:999px;flex:0 0 auto;border:0;cursor:default}
 .ctxchip.flagc{background:var(--acc-bg);color:var(--acc)}
 .ctxchip.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink2);cursor:pointer}

@@ -33,18 +33,9 @@ export default function App() {
   const [gMotion, setGMotion] = useState(1)
   const [gBlur, setGBlur] = useState(1)
   const [gradientOpen, setGradientOpen] = useState(false)
-  const [edgeRun, setEdgeRun] = useState(0)
   const [resetKey, setResetKey] = useState(0)
   const grainURL = useMemo(noiseURL, [])
   const lp = useRef(null), pt = useRef({ x: 0, y: 0 })
-  const firstPal = useRef(true)
-
-  // run the edge sweep whenever the palette (country layer) changes — skip the first paint
-  useEffect(() => {
-    if (firstPal.current) { firstPal.current = false; return }
-    setEdgeRun(k => k + 1)
-  }, [palette[0], palette[1], palette[2]])
-
   function restart() { setMenuOpen(false); setResetKey(k => k + 1); resetPalette() }
 
   const setPalette = (t, m, g) => setPaletteState([t, m, g])
@@ -82,16 +73,6 @@ export default function App() {
             <Comp setPalette={setPalette} resetPalette={resetPalette} />
           </motion.div>
         </AnimatePresence>
-        {edgeRun > 0 && (
-          <svg className="edgerun" key={edgeRun} viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="esg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#7de3ff" /><stop offset="0.5" stopColor="#b39dff" /><stop offset="1" stopColor="#ff9ecb" />
-              </linearGradient>
-            </defs>
-            <rect x="0.6" y="0.6" width="98.8" height="98.8" rx="1.5" fill="none" stroke="url(#esg)" strokeWidth="3.5" pathLength="100" strokeDasharray="26 74" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-          </svg>
-        )}
         <AnimatePresence>{toast && <motion.div key="t" className="toast" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{toast}</motion.div>}</AnimatePresence>
       </div>
       <ProtoMenu open={menuOpen} protos={PROTOS} activeId={activeId} onSelect={select} onClose={() => setMenuOpen(false)} appVersion={APP_VERSION} frames={FRAMES} frame={frameId} setFrame={setFrameId} onOpenGradient={() => { setMenuOpen(false); setGradientOpen(true) }} onRestart={restart} />
