@@ -4,16 +4,17 @@ import StarAvatar from '../components/StarAvatar.jsx'
 import { COUNTRIES } from '../lib/palettes.js'
 
 // Iridescent comet that traces the composer's own rounded edge (measured in real px so corners are correct).
-function EdgeSweep({ radius = 26 }) {
+function EdgeSweep({ radius = 26, cols }) {
   const ref = useRef(null)
   const [d, setD] = useState({ w: 0, h: 0 })
   useLayoutEffect(() => {
     const el = ref.current?.parentElement
     if (el) { const r = el.getBoundingClientRect(); setD({ w: Math.round(r.width), h: Math.round(r.height) }) }
   }, [])
+  const [c0, c1, c2] = cols && cols.length === 3 ? cols : ['#7de3ff', '#b39dff', '#ff9ecb']
   return (
     <svg ref={ref} className="edgerun" viewBox={`0 0 ${d.w || 1} ${d.h || 1}`} preserveAspectRatio="none">
-      <defs><linearGradient id="esg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#7de3ff" /><stop offset="0.5" stopColor="#b39dff" /><stop offset="1" stopColor="#ff9ecb" /></linearGradient></defs>
+      <defs><linearGradient id="esg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor={c0} /><stop offset="0.5" stopColor={c1} /><stop offset="1" stopColor={c2} /></linearGradient></defs>
       {d.w > 0 && <rect x="2" y="2" width={d.w - 4} height={d.h - 4} rx={radius} fill="none" stroke="url(#esg)" strokeWidth="3.5" pathLength="100" strokeDasharray="26 74" strokeLinecap="round" />}
     </svg>
   )
@@ -42,10 +43,11 @@ export default function Talk({ setPalette, resetPalette }) {
   const [msgs, setMsgs] = useState([])
   const [val, setVal] = useState('')
   const [country, setCountry] = useState(null)
-  const [modal, setModal] = useState(false)
-  const [q, setQ] = useState('')
+  const [picker, setPicker] = useState(false)
   const [voice, setVoice] = useState(false)
   const [sweep, setSweep] = useState(0)
+  const [sweepPal, setSweepPal] = useState(null)
+  const ALL = [...COUNTRIES].sort((a, b) => a[1].localeCompare(b[1]))
 
   function reply(text) {
     const t = text.toLowerCase()
@@ -58,7 +60,7 @@ export default function Talk({ setPalette, resetPalette }) {
     }, 620)
   }
   function send(text) { text = (text || val).trim(); if (!text) return; setMsgs(m => [...m, { role: 'me', text }]); setVal(''); reply(text) }
-  function applyCountry(c) { setCountry(c); setPalette(c[3][0], c[3][1], c[3][2]); setModal(false); setQ(''); setVal(''); setSweep(s => s + 1) }
+  function applyCountry(c) { setCountry(c); setPalette(c[3][0], c[3][1], c[3][2]); setPicker(false); setVal(''); setSweepPal(c[3]); setSweep(s => s + 1) }
   function clearCountry() { setCountry(null); resetPalette() }
   // live country watcher on the text field — type a country name to surface suggestions
   const sugg = (() => {
@@ -68,7 +70,6 @@ export default function Talk({ setPalette, resetPalette }) {
     return pre.concat(inc).slice(0, 3)
   })()
   function endVoice(commit) { setVoice(false); if (commit) { const t = 'My train from Vienna was 90 minutes late.'; setMsgs(m => [...m, { role: 'me', text: t }]); reply(t) } }
-  const list = q.trim() ? COUNTRIES.filter(c => c[1].toLowerCase().includes(q.trim().toLowerCase())) : COUNTRIES
   const started = msgs.length > 0
 
   return <>
@@ -89,7 +90,7 @@ export default function Talk({ setPalette, resetPalette }) {
 
     <div style={{ padding: '8px 16px 18px' }}>
       <div className="ctxbar">
-        {sweep > 0 && <EdgeSweep key={sweep} />}
+        {sweep > 0 && <EdgeSweep key={sweep} cols={sweepPal} />}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <input className="ctxinput" style={{ fontSize: 18, height: 'auto', margin: 0, flex: 1 }} value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') send() }} placeholder="Talk to Europe" />
           {val.trim()
@@ -102,28 +103,17 @@ export default function Talk({ setPalette, resetPalette }) {
             <AnimatePresence>
               {country && <motion.span key={country[0]} className="flagav" initial={{ opacity: 0, scale: .6, x: -10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: .6, x: -10 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={clearCountry} title={'Clear ' + country[1]}><img src={flagSrc(country[0])} alt={country[1]} /></motion.span>}
             </AnimatePresence>
+            <button className="addav" onClick={() => setPicker(p => !p)} aria-label="Add country"><Plus /></button>
           </div>
-          <button className="add" onClick={() => setModal(true)}><Plus /></button>
-          <span className="ctxchip"><Tick /> EU ID</span>
-          <AnimatePresence>
-            {sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => applyCountry(c)}>{c[2]} {c[1]}</motion.button>)}
+          {!picker && <span className="ctxchip"><Tick /> EU ID</span>}
+          <AnimatePresence initial={false}>
+            {picker
+              ? ALL.map(c => <motion.button key={c[0]} className="ctxchip" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 32 }} style={{ cursor: 'pointer' }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)
+              : sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => applyCountry(c)}><img className="pchipflag" src={flagSrc(c[0])} alt="" />{c[1]}</motion.button>)}
           </AnimatePresence>
         </div>
       </div>
     </div>
-
-    <AnimatePresence>
-      {modal && [
-        <motion.div key="b" className="cmback" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .2 }} onClick={() => setModal(false)} />,
-        <motion.div key="s" className="cmsheet" initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', stiffness: 440, damping: 42 }}>
-          <div className="cmgrip" /><div className="cmtitle">Your country</div>
-          <div className="cmsearchwrap"><SearchIco /><input className="cmsearch" value={q} onChange={e => setQ(e.target.value)} placeholder="Search" /></div>
-          <div className="cmlist">
-            {list.map(c => <div key={c[0]} className={'cmrow' + (country && country[0] === c[0] ? ' sel' : '')} onClick={() => applyCountry(c)}><span className="fl">{c[2]}</span>{c[1]}<span className="ck"><CheckBlue /></span></div>)}
-          </div>
-        </motion.div>
-      ]}
-    </AnimatePresence>
 
     <AnimatePresence>
       {voice && (

@@ -91,7 +91,7 @@ button,input{font-family:inherit}
 
 /* context composer */
 .ctxwrap{margin:auto;width:100%;padding:0 16px}
-.ctxbar{background:#fff;border-radius:28px;padding:16px;box-shadow:0 12px 44px rgba(20,22,40,.13)}
+.ctxbar{position:relative;background:#fff;border-radius:28px;padding:16px;box-shadow:0 12px 44px rgba(20,22,40,.13)}
 .ctxinput{display:block;width:100%;border:0;background:transparent;outline:none;font-size:22px;font-weight:500;color:var(--ink);caret-color:var(--black);height:30px;margin:2px 0 16px;padding:0}
 .ctxchips{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
 .ctxchips::-webkit-scrollbar{display:none}
@@ -101,6 +101,8 @@ button,input{font-family:inherit}
 .avstack>*+*{margin-left:-12px}
 .flagav{width:36px;height:36px;border-radius:50%;overflow:hidden;background:#fff;box-shadow:0 0 0 3px #fff;cursor:pointer;position:relative;z-index:2}
 .flagav img{width:100%;height:100%;object-fit:cover;display:block}
+.addav{width:36px;height:36px;border-radius:50%;background:var(--fill);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px #fff;position:relative;z-index:3}
+.pchipflag{width:20px;height:20px;border-radius:50%;object-fit:cover;display:block}
 .ctxchip{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 14px;font-size:14px;font-weight:500;color:var(--ink);background:var(--fill);border-radius:999px;flex:0 0 auto;border:0;cursor:default}
 .ctxchip.flagc{background:var(--acc-bg);color:var(--acc)}
 .ctxchip.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink2);cursor:pointer}
