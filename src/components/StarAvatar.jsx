@@ -1,11 +1,12 @@
 import { useRef, useEffect } from 'react'
+import { motion } from 'framer-motion'
 
 const STARP = 'M0,-7L1.65,-2.27 6.66,-2.16 2.69,1.38 4.11,6.66 0,3.5 -4.11,6.66 -2.69,1.38 -6.66,-2.16 -1.65,-2.27Z'
 const N = 6, STEP = (Math.PI * 2) / N, R = 60, CY = 110, T = 1.6 // seconds per star-to-centre segment
 const smooth = x => x * x * x * (x * (x * 6 - 15) + 10) // smootherstep: flatter velocity at BOTH ends → eases in and out symmetrically
 
 // EU flag avatar: gold stars orbiting on a blue field, masked to a circle.
-export default function StarAvatar({ size = 36 }) {
+export default function StarAvatar({ size = 36, layoutId }) {
   const ref = useRef(null)
   useEffect(() => {
     const stars = ref.current.querySelectorAll('.ring .s')
@@ -32,8 +33,8 @@ export default function StarAvatar({ size = 36 }) {
   const stars = []
   for (let i = 0; i < N; i++) stars.push(<g className="s" key={i} transform="translate(50,50)"><path d={STARP} transform="scale(2.6)" /></g>)
   return (
-    <span className="staravatar" ref={ref} style={{ width: size, height: size }}>
+    <motion.span layoutId={layoutId} className="staravatar" ref={ref} style={{ width: size, height: size }}>
       <svg viewBox="0 0 100 100"><g className="ring">{stars}</g></svg>
-    </span>
+    </motion.span>
   )
 }
