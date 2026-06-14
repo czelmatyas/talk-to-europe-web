@@ -91,7 +91,7 @@ export default function Talk({ setPalette, resetPalette }) {
       {CHIPS.map(c => <button key={c} onClick={() => send(c)} style={{ fontSize: 13.5, color: '#fff', background: 'rgba(255,255,255,.16)', backdropFilter: 'blur(10px)', border: 0, padding: '10px 14px', borderRadius: 15, cursor: 'pointer' }}>{c}</button>)}
     </div>}
 
-    <div className="composerwrap" style={{ padding: '8px 16px 18px' }}>
+    <div className="composerwrap" style={{ padding: '8px 22px 18px' }}>
       <motion.div className="ctxbar" data-voice={voice ? 1 : 0} layout transition={{ type: 'spring', stiffness: 260, damping: 30 }}>
         {sweep > 0 && <EdgeSweep key={sweep} cols={sweepPal} />}
         {!voice ? (
