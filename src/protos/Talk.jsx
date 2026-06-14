@@ -78,13 +78,17 @@ export default function Talk({ setPalette, resetPalette }) {
             : <button className="send mic" onClick={() => setVoice(true)} aria-label="Talk by voice"><MicIco /></button>}
         </div>
         <div className="ctxchips" style={{ marginTop: 14 }}>
-          <StarAvatar size={40} />
+          <div className="avstack">
+            <StarAvatar size={36} />
+            <AnimatePresence>
+              {country && <motion.span key={country[0]} className="flagav" initial={{ opacity: 0, scale: .6, x: -10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: .6, x: -10 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={clearCountry} title={'Clear ' + country[1]}>{country[2]}</motion.span>}
+            </AnimatePresence>
+          </div>
           <button className="add" onClick={() => setModal(true)}><Plus /></button>
           <span className="ctxchip"><Tick /> EU ID</span>
           <AnimatePresence>
             {sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => applyCountry(c)}>{c[2]} {c[1]}</motion.button>)}
           </AnimatePresence>
-          {country && <motion.span key={country[0]} className="ctxchip flagc" initial={{ opacity: 0, scale: .85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 520, damping: 28 }}>{country[2]} {country[1]} <button className="cx" onClick={clearCountry}>✕</button></motion.span>}
         </div>
       </div>
     </div>
