@@ -1,58 +1,51 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
-// --- repo / deploy config (edit if the repo or Vercel scope changes) ---
-const REPO = 'czelmatyas/talk-to-europe-web'
-const PROJECT = 'talk-to-europe-web'
-const SCOPE = 'matyas-9772s-projects'
 const TOP_N = 3
-const branchURL = name =>
-  `https://${PROJECT}-git-${name.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '')}-${SCOPE}.vercel.app`
 const fmt = iso => iso ? new Date(iso).toLocaleString(undefined, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }) : ''
 
-function useBranches(open) {
+// Real deployment history via the serverless function (/api/deployments).
+function useDeployments(open) {
   const [rows, setRows] = useState(null)
   const [err, setErr] = useState('')
   useEffect(() => {
     if (!open || rows || err) return
     let alive = true
-    fetch(`https://api.github.com/repos/${REPO}/branches?per_page=100`)
-      .then(r => { if (!r.ok) throw new Error(r.status === 403 ? 'GitHub rate limit — try again shortly' : 'GitHub error ' + r.status); return r.json() })
-      .then(async list => {
-        const enriched = await Promise.all(list.map(async b => {
-          try {
-            const c = await (await fetch(b.commit.url)).json()
-            return { name: b.name, date: c.commit?.committer?.date || c.commit?.author?.date, author: c.author?.login || c.commit?.author?.name || c.commit?.committer?.name || 'unknown', avatar: c.author?.avatar_url }
-          } catch { return { name: b.name, author: 'unknown' } }
-        }))
-        if (alive) setRows(enriched)
+    fetch('/api/deployments')
+      .then(async r => {
+        const ct = r.headers.get('content-type') || ''
+        if (!ct.includes('application/json')) throw new Error('Deployment history loads on the live site (talk-to-europe-web.vercel.app).')
+        const d = await r.json()
+        if (d.error) throw new Error(d.error)
+        return d.rows || []
       })
+      .then(rs => { if (alive) setRows(rs) })
       .catch(e => { if (alive) setErr(e.message) })
     return () => { alive = false }
   }, [open, rows, err])
   return { rows, err }
 }
 
-function BranchRow({ b }) {
+function DeployRow({ d }) {
   return (
-    <a className="pmrow" href={branchURL(b.name)} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div>
-        <div className="t">{b.name}{b.name === 'main' && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#7ee0a3' }}>production</span>}</div>
-        <div className="d">{b.date ? fmt(b.date) : 'no commits yet'}</div>
+    <a className="pmrow" href={d.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div style={{ minWidth: 0 }}>
+        <div className="t">{d.name}{d.target === 'production' && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#7ee0a3' }}>production</span>}</div>
+        <div className="d">{fmt(d.date)}{d.sha ? ' · ' + d.sha : ''}</div>
       </div>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeb6ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
     </a>
   )
 }
 
-function TeamVersions({ rows, err }) {
+function TeamDeployments({ rows, err }) {
   const [expanded, setExpanded] = useState({})
   if (err) return <div className="d" style={{ padding: '4px 12px 8px', color: '#caa86a' }}>{err}</div>
   if (!rows) return <div className="d" style={{ padding: '4px 12px 8px' }}>Loading deployments…</div>
+  if (!rows.length) return <div className="d" style={{ padding: '4px 12px 8px' }}>No deployments yet.</div>
 
-  // group by person, newest first within each, people ordered by most-recent activity
   const byPerson = {}
-  rows.forEach(b => { (byPerson[b.author] = byPerson[b.author] || []).push(b) })
+  rows.forEach(d => { (byPerson[d.author] = byPerson[d.author] || []).push(d) })
   Object.values(byPerson).forEach(list => list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0)))
   const people = Object.keys(byPerson).sort((a, b) =>
     new Date(byPerson[b][0]?.date || 0) - new Date(byPerson[a][0]?.date || 0))
@@ -61,15 +54,14 @@ function TeamVersions({ rows, err }) {
     const list = byPerson[name]
     const open = expanded[name]
     const shown = open ? list : list.slice(0, TOP_N)
-    const avatar = list.find(b => b.avatar)?.avatar
     return (
       <div key={name}>
         <div className="pmperson">
-          {avatar ? <img className="av" src={avatar} alt="" /> : <span className="av" style={{ background: '#2b3160', color: '#cdd2ec', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>{name[0]?.toUpperCase()}</span>}
+          <span className="av" style={{ background: '#2b3160', color: '#cdd2ec', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>{name[0]?.toUpperCase()}</span>
           <span className="nm">{name}</span>
-          <span className="cnt">{list.length} {list.length === 1 ? 'version' : 'versions'}</span>
+          <span className="cnt">{list.length} {list.length === 1 ? 'deploy' : 'deploys'}</span>
         </div>
-        {shown.map(b => <BranchRow key={b.name} b={b} />)}
+        {shown.map((d, i) => <DeployRow key={d.url || i} d={d} />)}
         {list.length > TOP_N && (
           <button className="pmmore" onClick={() => setExpanded(e => ({ ...e, [name]: !open }))}>
             {open ? 'Show less' : `Load more (${list.length - TOP_N})`}
@@ -83,7 +75,7 @@ function TeamVersions({ rows, err }) {
 export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, appVersion }) {
   const groups = {}, order = []
   protos.forEach(p => { const s = p.slot || 'Other'; if (!groups[s]) { groups[s] = []; order.push(s) } groups[s].push(p) })
-  const { rows, err } = useBranches(open)
+  const { rows, err } = useDeployments(open)
 
   return (
     <AnimatePresence>
@@ -114,9 +106,9 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
           ))}
 
           <div className="pmgroup">Team deployments · by person · live</div>
-          <TeamVersions rows={rows} err={err} />
+          <TeamDeployments rows={rows} err={err} />
 
-          <div className="pmhint">Long-press anywhere to reopen · deployments open in a new tab</div>
+          <div className="pmhint">Long-press anywhere to reopen · each deploy opens its frozen snapshot</div>
         </motion.div>
       ]}
     </AnimatePresence>
