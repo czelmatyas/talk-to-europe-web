@@ -69,12 +69,14 @@ export default function Talk({ setPalette, resetPalette }) {
     const inc = COUNTRIES.filter(c => c[1].toLowerCase().indexOf(s) > 0)
     return pre.concat(inc).slice(0, 3)
   })()
+  function reset() { setMsgs([]); setVal(''); setPicker(false) } // back to the start state
   function endVoice(commit) { setVoice(false); if (commit) { const t = 'My train from Vienna was 90 minutes late.'; setMsgs(m => [...m, { role: 'me', text: t }]); reply(t) } }
   const started = msgs.length > 0
 
   return <>
     {voice && <div className="voiceback" onClick={() => endVoice(false)} />}
-    <div className="scroll">
+    {started && !voice && <div className="convback" onClick={reset} />}
+    <div className="scroll" onClick={e => { if (e.target === e.currentTarget) reset() }}>
       {msgs.map((m, i) => m.role === 'me'
         ? <motion.div key={i} className="bubble me" {...rise}>{m.text}</motion.div>
         : <div key={i}>
