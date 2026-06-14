@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 const REPO = 'czelmatyas/talk-to-europe-web'
 const PROJECT = 'talk-to-europe-web'
 const SCOPE = 'matyas-9772s-projects'
+const TOP_N = 3
 const branchURL = name =>
   `https://${PROJECT}-git-${name.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '')}-${SCOPE}.vercel.app`
 const fmt = iso => iso ? new Date(iso).toLocaleString(undefined, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }) : ''
@@ -21,16 +22,62 @@ function useBranches(open) {
         const enriched = await Promise.all(list.map(async b => {
           try {
             const c = await (await fetch(b.commit.url)).json()
-            return { name: b.name, date: c.commit?.committer?.date || c.commit?.author?.date, author: c.author?.login || c.commit?.author?.name || c.commit?.committer?.name }
-          } catch { return { name: b.name } }
+            return { name: b.name, date: c.commit?.committer?.date || c.commit?.author?.date, author: c.author?.login || c.commit?.author?.name || c.commit?.committer?.name || 'unknown', avatar: c.author?.avatar_url }
+          } catch { return { name: b.name, author: 'unknown' } }
         }))
-        enriched.sort((a, b) => (a.name === 'main' ? -1 : b.name === 'main' ? 1 : new Date(b.date || 0) - new Date(a.date || 0)))
         if (alive) setRows(enriched)
       })
       .catch(e => { if (alive) setErr(e.message) })
     return () => { alive = false }
   }, [open, rows, err])
   return { rows, err }
+}
+
+function BranchRow({ b }) {
+  return (
+    <a className="pmrow" href={branchURL(b.name)} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div>
+        <div className="t">{b.name}{b.name === 'main' && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#7ee0a3' }}>production</span>}</div>
+        <div className="d">{b.date ? fmt(b.date) : 'no commits yet'}</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeb6ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
+    </a>
+  )
+}
+
+function TeamVersions({ rows, err }) {
+  const [expanded, setExpanded] = useState({})
+  if (err) return <div className="d" style={{ padding: '4px 12px 8px', color: '#caa86a' }}>{err}</div>
+  if (!rows) return <div className="d" style={{ padding: '4px 12px 8px' }}>Loading deployments…</div>
+
+  // group by person, newest first within each, people ordered by most-recent activity
+  const byPerson = {}
+  rows.forEach(b => { (byPerson[b.author] = byPerson[b.author] || []).push(b) })
+  Object.values(byPerson).forEach(list => list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0)))
+  const people = Object.keys(byPerson).sort((a, b) =>
+    new Date(byPerson[b][0]?.date || 0) - new Date(byPerson[a][0]?.date || 0))
+
+  return people.map(name => {
+    const list = byPerson[name]
+    const open = expanded[name]
+    const shown = open ? list : list.slice(0, TOP_N)
+    const avatar = list.find(b => b.avatar)?.avatar
+    return (
+      <div key={name}>
+        <div className="pmperson">
+          {avatar ? <img className="av" src={avatar} alt="" /> : <span className="av" style={{ background: '#2b3160', color: '#cdd2ec', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>{name[0]?.toUpperCase()}</span>}
+          <span className="nm">{name}</span>
+          <span className="cnt">{list.length} {list.length === 1 ? 'version' : 'versions'}</span>
+        </div>
+        {shown.map(b => <BranchRow key={b.name} b={b} />)}
+        {list.length > TOP_N && (
+          <button className="pmmore" onClick={() => setExpanded(e => ({ ...e, [name]: !open }))}>
+            {open ? 'Show less' : `Load more (${list.length - TOP_N})`}
+          </button>
+        )}
+      </div>
+    )
+  })
 }
 
 export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, appVersion }) {
@@ -66,20 +113,10 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
             </div>
           ))}
 
-          <div className="pmgroup">Team versions · live</div>
-          {err && <div className="d" style={{ padding: '4px 12px 8px', color: '#caa86a' }}>{err}</div>}
-          {!rows && !err && <div className="d" style={{ padding: '4px 12px 8px' }}>Loading branches…</div>}
-          {rows && rows.map(b => (
-            <a key={b.name} className="pmrow" href={branchURL(b.name)} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div>
-                <div className="t">{b.name}{b.name === 'main' && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#7ee0a3' }}>production</span>}</div>
-                <div className="d">{b.author || 'unknown'}{b.date ? ' · ' + fmt(b.date) : ''}</div>
-              </div>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeb6ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
-            </a>
-          ))}
+          <div className="pmgroup">Team deployments · by person · live</div>
+          <TeamVersions rows={rows} err={err} />
 
-          <div className="pmhint">Long-press anywhere to reopen · branches open in a new tab</div>
+          <div className="pmhint">Long-press anywhere to reopen · deployments open in a new tab</div>
         </motion.div>
       ]}
     </AnimatePresence>
