@@ -18,13 +18,15 @@ button,input{font-family:inherit}
 .frame{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#0b1030}
 .frame[data-fixed="1"]{aspect-ratio:var(--ar);height:min(100%, calc(100vw / var(--ar)));width:auto;max-width:100%}
 
-/* edge sweep — a flowing gradient border (target palette) runs around the field once */
+/* edge sweep — flowing gradient border w/ travelling highlight; two layers (halo + line) for a real glow */
 @property --ea{syntax:'<angle>';inherits:false;initial-value:0deg}
-.edgerun{position:absolute;inset:0;z-index:6;pointer-events:none;padding:4px;
+.edgerun{position:absolute;inset:0;z-index:6;pointer-events:none;
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;
   mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);mask-composite:exclude;
-  filter:blur(3px);animation:edgespin 1.5s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes edgespin{0%{--ea:0deg;opacity:0}14%{opacity:1}80%{opacity:1}100%{--ea:360deg;opacity:0}}
+  animation:edgespin 1.6s cubic-bezier(.33,0,.2,1) forwards;will-change:opacity}
+.edgerun.line{padding:2px;filter:blur(1.2px)}
+.edgerun.glow{padding:5px;filter:blur(13px)}
+@keyframes edgespin{0%{--ea:0deg;opacity:0}12%{opacity:1}76%{opacity:1}100%{--ea:360deg;opacity:0}}
 
 /* backdrop fills the frame; negative z keeps it behind the (static) content so modals can anchor to the frame */
 .backdrop{position:absolute;inset:0;width:100%;height:100%;z-index:-2;display:block}
@@ -96,18 +98,21 @@ button,input{font-family:inherit}
 .ctxwrap{margin:auto;width:100%;padding:0 16px}
 .ctxbar{position:relative;background:#fff;border-radius:28px;padding:16px;box-shadow:0 12px 44px rgba(20,22,40,.13)}
 .ctxinput{display:block;width:100%;border:0;background:transparent;outline:none;font-size:22px;font-weight:500;color:var(--ink);caret-color:var(--black);height:30px;margin:2px 0 16px;padding:0}
-.ctxchips{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.cttoolbar{display:flex;align-items:center;gap:10px}
+.ctxchips{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;padding:2px 0}
 .ctxchips::-webkit-scrollbar{display:none}
 .ctxchips .add{width:40px;height:40px;border-radius:12px;background:var(--fill);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
 /* avatar stack: blue star CTA + chosen country flag, overlapping like LISA avatars */
 .avstack{display:inline-flex;align-items:center;flex:0 0 auto}
 .avstack>*+*{margin-left:-12px}
-.flagav{width:36px;height:36px;border-radius:50%;overflow:hidden;background:#fff;box-shadow:0 0 0 3px #fff;cursor:pointer;position:relative;z-index:2}
-.flagav img{width:100%;height:100%;object-fit:cover;display:block}
+.flagav{width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #fff;cursor:pointer;position:relative;z-index:2}
+.flagav img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
 .addav{width:36px;height:36px;border-radius:50%;background:var(--fill);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px #fff;position:relative;z-index:3}
 .pchipflag{width:20px;height:20px;border-radius:50%;object-fit:cover;display:block}
 .flagwrap{position:relative;display:inline-flex;align-items:center}
-.aistar{position:absolute;top:-5px;right:-5px;font-size:10px;line-height:1;color:var(--cta);text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 2px #fff}
+/* corner badge: + to add a suggestion, × to remove the connected filter — small stroke for visibility on the flag */
+.cornerbadge{position:absolute;top:-5px;right:-6px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 0 1.5px rgba(20,22,40,.2);display:flex;align-items:center;justify-content:center}
+.flagav .cornerbadge{top:-3px;right:-3px;width:17px;height:17px}
 .ctxchip{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 14px;font-size:14px;font-weight:500;color:var(--ink);background:var(--fill);border-radius:999px;flex:0 0 auto;border:0;cursor:default}
 .ctxchip.flagc{background:var(--acc-bg);color:var(--acc)}
 .ctxchip.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink2);cursor:pointer}
