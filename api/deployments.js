@@ -5,7 +5,7 @@
 const PROJECT = 'prj_zRJKfs30gmyG9k8sYa21Xc6evVbE'
 const TEAM = 'team_MEVV8rQ5spg1OuywYgmwSqWO'
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   const token = process.env.VERCEL_TOKEN
   if (!token) {
     res.status(200).json({ error: 'Set VERCEL_TOKEN in Vercel → Settings → Environment Variables, then redeploy.' })
