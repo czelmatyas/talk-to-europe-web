@@ -24,8 +24,8 @@ button,input{font-family:inherit}
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;
   mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);mask-composite:exclude;
   animation:edgespin 1.6s cubic-bezier(.33,0,.2,1) forwards;will-change:opacity}
-.edgerun.line{padding:2px;filter:blur(1.2px)}
-.edgerun.glow{padding:5px;filter:blur(13px)}
+.edgerun.line{padding:1px;filter:blur(3px)}
+.edgerun.glow{padding:2px;filter:blur(18px)}
 @keyframes edgespin{0%{--ea:0deg;opacity:0}12%{opacity:1}76%{opacity:1}100%{--ea:360deg;opacity:0}}
 
 /* backdrop fills the frame; negative z keeps it behind the (static) content so modals can anchor to the frame */
@@ -96,7 +96,7 @@ button,input{font-family:inherit}
 
 /* context composer */
 .ctxwrap{margin:auto;width:100%;padding:0 16px}
-.ctxbar{position:relative;background:#fff;border-radius:28px;padding:16px;box-shadow:0 12px 44px rgba(20,22,40,.13)}
+.ctxbar{position:relative;background:#fff;border-radius:30px;padding:20px 22px;box-shadow:0 12px 44px rgba(20,22,40,.13)}
 .ctxinput{display:block;width:100%;border:0;background:transparent;outline:none;font-size:22px;font-weight:500;color:var(--ink);caret-color:var(--cta);height:30px;margin:2px 0 16px;padding:0}
 .cttoolbar{display:flex;align-items:center;gap:10px}
 .ctxchips{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;padding:2px 0}

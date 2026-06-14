@@ -5,7 +5,7 @@ import { COUNTRIES } from '../lib/palettes.js'
 
 // Google-style flowing gradient border: target-palette ring with a bright travelling highlight,
 // rendered as two layers (soft halo + crisp line) so it glows rather than draws a flat line.
-function EdgeSweep({ cols, radius = 28 }) {
+function EdgeSweep({ cols, radius = 30 }) {
   const [c0, c1, c2] = cols && cols.length === 3 ? cols : ['#7de3ff', '#b39dff', '#ff9ecb']
   const bg = `conic-gradient(from var(--ea), ${c0} 0deg, ${c1} 95deg, #ffffff 150deg, ${c2} 215deg, ${c0} 330deg, ${c0} 360deg)`
   const st = { background: bg, borderRadius: radius }
