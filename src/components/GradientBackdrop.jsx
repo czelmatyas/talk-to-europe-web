@@ -1,10 +1,11 @@
 import { useRef, useEffect } from 'react'
 import { shift, mix, rgba } from '../lib/colors.js'
 
-export default function GradientBackdrop({ palette }) {
+export default function GradientBackdrop({ palette, motion = 1, blur = 1 }) {
   const cvRef = useRef(null)
   const cur = useRef({ top: palette[0], mid: palette[1], glow: palette[2] })
   const target = useRef(null)
+  const motionR = useRef(motion), blurR = useRef(blur)
 
   useEffect(() => {
     target.current = {
@@ -13,6 +14,9 @@ export default function GradientBackdrop({ palette }) {
       t0: performance.now()
     }
   }, [palette[0], palette[1], palette[2]])
+
+  useEffect(() => { motionR.current = motion }, [motion])
+  useEffect(() => { blurR.current = blur }, [blur])
 
   useEffect(() => {
     const cv = cvRef.current, ctx = cv.getContext('2d')
@@ -40,7 +44,7 @@ export default function GradientBackdrop({ palette }) {
         P.glow = mix(target.current.from.glow, target.current.to.glow, e)
         if (k >= 1) target.current = null
       }
-      const D = derive(P), t = now / 1000, W = off.width, H = off.height, a = 2 * Math.sin(t * 0.08), b2 = 2 * Math.cos(t * 0.07)
+      const m = motionR.current, D = derive(P), t = now / 1000, W = off.width, H = off.height, a = 2 * m * Math.sin(t * 0.08), b2 = 2 * m * Math.cos(t * 0.07)
       const bg = octx.createLinearGradient(0, 0, 0, H)
       bg.addColorStop(0, D.baseTop); bg.addColorStop(.5, P.mid); bg.addColorStop(1, D.baseBot)
       octx.fillStyle = bg; octx.fillRect(0, 0, W, H)
@@ -49,7 +53,7 @@ export default function GradientBackdrop({ palette }) {
       eblob(octx, W, H, 76 + a, 33 - b2, 54, 46, D.cool, 0.58, .62)
       eblob(octx, W, H, 27 - a, 24 + b2, 58, 48, P.top, 0.72, .64)
       eblob(octx, W, H, 50 + a * 0.6, 112, 86, 70, P.glow, 0.92, .66)
-      const bpx = Math.max(8, (cv.clientHeight || window.innerHeight) * 0.06)
+      const bpx = Math.max(8, (cv.clientHeight || window.innerHeight) * 0.06) * blurR.current
       ctx.clearRect(0, 0, cv.width, cv.height)
       ctx.save(); ctx.filter = 'blur(' + bpx + 'px)'; ctx.drawImage(off, -(off.width - cv.width) / 2, -(off.height - cv.height) / 2); ctx.restore()
       raf = requestAnimationFrame(frame)

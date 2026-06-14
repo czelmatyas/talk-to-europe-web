@@ -40,8 +40,15 @@ export default function Talk({ setPalette, resetPalette }) {
     }, 620)
   }
   function send(text) { text = (text || val).trim(); if (!text) return; setMsgs(m => [...m, { role: 'me', text }]); setVal(''); reply(text) }
-  function applyCountry(c) { setCountry(c); setPalette(c[3][0], c[3][1], c[3][2]); setModal(false); setQ('') }
+  function applyCountry(c) { setCountry(c); setPalette(c[3][0], c[3][1], c[3][2]); setModal(false); setQ(''); setVal('') }
   function clearCountry() { setCountry(null); resetPalette() }
+  // live country watcher on the text field — type a country name to surface suggestions
+  const sugg = (() => {
+    const s = val.trim().toLowerCase(); if (!s) return []
+    const pre = COUNTRIES.filter(c => c[1].toLowerCase().indexOf(s) === 0)
+    const inc = COUNTRIES.filter(c => c[1].toLowerCase().indexOf(s) > 0)
+    return pre.concat(inc).slice(0, 3)
+  })()
   function endVoice(commit) { setVoice(false); if (commit) { const t = 'My train from Vienna was 90 minutes late.'; setMsgs(m => [...m, { role: 'me', text: t }]); reply(t) } }
   const list = q.trim() ? COUNTRIES.filter(c => c[1].toLowerCase().includes(q.trim().toLowerCase())) : COUNTRIES
   const started = msgs.length > 0
@@ -76,6 +83,9 @@ export default function Talk({ setPalette, resetPalette }) {
           <StarAvatar size={40} />
           <button className="add" onClick={() => setModal(true)}><Plus /></button>
           <span className="ctxchip"><Tick /> EU ID</span>
+          <AnimatePresence>
+            {sugg.map(c => <motion.button key={c[0]} className="ctxchip ghost" initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9 }} transition={{ type: 'spring', stiffness: 520, damping: 30 }} onClick={() => applyCountry(c)}>{c[2]} {c[1]}</motion.button>)}
+          </AnimatePresence>
           {country && <motion.span key={country[0]} className="ctxchip flagc" initial={{ opacity: 0, scale: .85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 520, damping: 28 }}>{country[2]} {country[1]} <button className="cx" onClick={clearCountry}>✕</button></motion.span>}
         </div>
       </div>

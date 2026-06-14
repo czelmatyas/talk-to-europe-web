@@ -1,6 +1,7 @@
 import { useState, useRef, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import GradientBackdrop from './components/GradientBackdrop.jsx'
+import GradientEditor from './components/GradientEditor.jsx'
 import ProtoMenu from './components/ProtoMenu.jsx'
 import PROTOS from './protos/index.js'
 import { EU } from './lib/palettes.js'
@@ -28,7 +29,11 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [toast, setToast] = useState('')
   const [frameId, setFrameId] = useState('agnostic')
-  const grain = useMemo(noiseURL, [])
+  const [grainAmt, setGrainAmt] = useState(1)
+  const [gMotion, setGMotion] = useState(1)
+  const [gBlur, setGBlur] = useState(1)
+  const [gradientOpen, setGradientOpen] = useState(false)
+  const grainURL = useMemo(noiseURL, [])
   const lp = useRef(null), pt = useRef({ x: 0, y: 0 })
 
   const setPalette = (t, m, g) => setPaletteState([t, m, g])
@@ -38,8 +43,8 @@ export default function App() {
   const frame = FRAMES.find(f => f.id === frameId) || FRAMES[0]
 
   function down(e) {
-    if (menuOpen) return
-    if (e.target.closest && e.target.closest('input,textarea,button,a,.pmsheet,.cmsheet')) return
+    if (menuOpen || gradientOpen) return
+    if (e.target.closest && e.target.closest('input,textarea,button,a,.pmsheet,.cmsheet,.gesheet')) return
     pt.current = { x: e.clientX, y: e.clientY }
     lp.current = setTimeout(() => setMenuOpen(true), 600)
   }
@@ -59,8 +64,8 @@ export default function App() {
   return (
     <div className="mat" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
       <div className="frame" data-fixed={frame.ar ? '1' : undefined} style={frameStyle}>
-        <GradientBackdrop palette={palette} />
-        <div className="grain" style={{ background: grain, backgroundSize: '200px 200px' }} />
+        <GradientBackdrop palette={palette} motion={gMotion} blur={gBlur} />
+        <div className="grain" style={{ background: grainURL, backgroundSize: '200px 200px', opacity: grainAmt }} />
         <AnimatePresence mode="wait">
           <motion.div key={activeId} className="col" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .3 }}>
             <Comp setPalette={setPalette} resetPalette={resetPalette} />
@@ -68,7 +73,8 @@ export default function App() {
         </AnimatePresence>
         <AnimatePresence>{toast && <motion.div key="t" className="toast" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{toast}</motion.div>}</AnimatePresence>
       </div>
-      <ProtoMenu open={menuOpen} protos={PROTOS} activeId={activeId} onSelect={select} onClose={() => setMenuOpen(false)} appVersion={APP_VERSION} frames={FRAMES} frame={frameId} setFrame={setFrameId} />
+      <ProtoMenu open={menuOpen} protos={PROTOS} activeId={activeId} onSelect={select} onClose={() => setMenuOpen(false)} appVersion={APP_VERSION} frames={FRAMES} frame={frameId} setFrame={setFrameId} onOpenGradient={() => { setMenuOpen(false); setGradientOpen(true) }} />
+      <GradientEditor open={gradientOpen} onClose={() => setGradientOpen(false)} palette={palette} setPalette={setPalette} resetPalette={resetPalette} grain={grainAmt} setGrain={setGrainAmt} motion={gMotion} setMotion={setGMotion} blur={gBlur} setBlur={setGBlur} />
     </div>
   )
 }
