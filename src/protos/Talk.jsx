@@ -19,7 +19,7 @@ function EdgeSweep({ cols, radius = 30 }) {
 // Merged flow: Home (ask anything) + Talk (the answer) + Context (your country) as one conversation.
 const rise = { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { type: 'spring', stiffness: 420, damping: 34 } }
 const Src = ({ children }) => <span className="srcchip"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2a3a8a" strokeWidth="2"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>{children}</span>
-const Assist = () => <div className="assist"><StarAvatar size={22} /> Talk to Europe</div>
+const Assist = () => <div className="assist"><span className="sq">✦</span> Talk to Europe</div>
 
 const TrainCard = () => <motion.div className="dscard" {...rise}><span className="pct">25%</span><h3>Train delayed +95 min</h3><div className="dskv"><span>Route</span><span>Wien → München</span></div><div className="dskv"><span>Compensation</span><span>≈ €18</span></div><div className="dskv"><span>Deadline to claim</span><span>3 months</span></div><div className="btnrow"><button className="btnp">File claim</button><button className="btns">Alternatives</button></div><div className="srcs"><span className="lbl">Sources</span><Src>EUR-Lex</Src></div></motion.div>
 const VerdictCard = () => <motion.div className="dscard" {...rise}><div className="warnhdr">⚠ Misleading — one real rule, one false claim</div><div className="verdict"><span className="vi tt">✓</span><div><b>True:</b> New petrol &amp; diesel car sales end in 2035.</div></div><div className="verdict"><span className="vi ff">✕</span><div><b>False:</b> Existing cars will be banned from the road.</div></div><div className="srcs"><Src>EUR-Lex</Src><Src>Your Europe</Src></div></motion.div>
