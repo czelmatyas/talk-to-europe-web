@@ -4,21 +4,24 @@ Interactive prototype for the "Talk to Europe" narrative (React + Vite + Framer 
 
 Live: **https://talk-to-europe-web.vercel.app**
 
-## No terminal needed — you just talk to Claude
+## No terminal, no tokens — GitHub Desktop for git, Claude for editing
+
+Claude can't reach the internet from its sandbox, so **all git happens in GitHub Desktop** (it has your login + network). Claude just **edits the files**. You do **not** need a personal access token or a Vercel account.
 
 **First time (once):**
-1. Make a free GitHub account → https://github.com/signup, send your username to Mátyás so he adds you as a collaborator.
-2. Install **GitHub Desktop** (https://desktop.github.com), sign in, and clone `talk-to-europe-web`. (This also sets up your git login, so Claude can push later.)
+1. Make a free GitHub account → https://github.com/signup, send your username to Mátyás to be added as a collaborator.
+2. Install **GitHub Desktop** (https://desktop.github.com) → sign in → clone `talk-to-europe-web`.
 3. In Cowork, **select the cloned folder as your context.**
 
-**Then everything is a prompt to Claude:**
-> Make me a new branch called NAME, edit the Talk prototype so the answer card is taller, then commit and push and give me my preview link.
+**Make your version:**
+1. GitHub Desktop: **Current Branch → New Branch**, name it your name (e.g. `lena`).
+2. Tell Claude what to change — e.g. *"edit the Talk prototype so the answer card is taller."*
+3. GitHub Desktop: **Commit**, then **Push / Publish branch**.
+4. Your live link (automatic, no login): `talk-to-europe-web-git-NAME-matyas-9772s-projects.vercel.app`
 
-Your live link: `talk-to-europe-web-git-NAME-matyas-9772s-projects.vercel.app` — record from it, share it. Flows you can ask for: **Talk · Widgets · Wallet · Trust · Public/Personal**.
+Flows you can ask Claude for: **Talk · Widgets · Wallet · Trust · Public/Personal**.
 
-**Remix someone else's version:** open the app → **long-press** anywhere → under "Versions" hit **Remix** on a deployment → it copies a ready prompt (just swap NAME) → paste to Claude.
-
-> If a push ever fails from Claude, just open GitHub Desktop and click **Push** — same result.
+**Remix someone's version:** open the app → **long-press** → under "Versions" hit **Remix** (it copies the steps). In GitHub Desktop: **Branch → Merge into current branch → pick their branch**, then tweak with Claude and push — it lands as a new version on your branch.
 
 ## How it works
 

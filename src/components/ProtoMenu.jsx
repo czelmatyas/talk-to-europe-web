@@ -50,7 +50,7 @@ function ProtoRow({ p, active, onSelect }) {
 
 const REPO_URL = 'https://github.com/czelmatyas/talk-to-europe-web'
 function remixPrompt(branch) {
-  return 'Clone ' + REPO_URL + ' and make me a new branch called NAME (replace NAME with your name) starting from the "' + branch + '" branch. Then install and run it, push the branch, and give me my Vercel preview link.'
+  return 'Remix "' + branch + '": in GitHub Desktop → Branch → "Merge into current branch" → pick "' + branch + '". Then ask Claude to tweak the prototype, and hit Commit + Push in GitHub Desktop.'
 }
 
 function DeployRow({ d, current, copied, onRemix }) {
