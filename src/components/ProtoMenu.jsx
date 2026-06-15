@@ -48,23 +48,33 @@ function ProtoRow({ p, active, onSelect }) {
   )
 }
 
-function DeployRow({ d, current }) {
+const REPO_URL = 'https://github.com/czelmatyas/talk-to-europe-web'
+function remixPrompt(branch) {
+  return 'Clone ' + REPO_URL + ' and make me a new branch called NAME (replace NAME with your name) starting from the "' + branch + '" branch. Then install and run it, push the branch, and give me my Vercel preview link.'
+}
+
+function DeployRow({ d, current, copied, onRemix }) {
   return (
-    <a className="pmrow" data-on={current ? 1 : 0} href={d.url} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div style={{ minWidth: 0 }}>
-        <div className="t">{d.name}{d.target === 'production' && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a7f37' }}>production</span>}</div>
-        <div className="d">{fmt(d.date)}{d.sha ? ' · ' + d.sha : ''}</div>
-      </div>
-      {current
-        ? <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a73e8', whiteSpace: 'nowrap' }}>● current</span>
-        : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aeb6ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>}
-    </a>
+    <div className="pmrow deployrow" data-on={current ? 1 : 0}>
+      <a className="dl" href={d.url} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flex: 1, minWidth: 0 }}>
+        <div style={{ minWidth: 0 }}>
+          <div className="t">{d.name}{d.target === 'production' && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a7f37' }}>production</span>}{current && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a73e8' }}>current</span>}</div>
+          <div className="d">{fmt(d.date)}{d.sha ? ' · ' + d.sha : ''}</div>
+        </div>
+      </a>
+      <button className="pmremix" onClick={() => onRemix(d)}>{copied ? 'Copied ✓' : 'Remix'}</button>
+    </div>
   )
 }
 
 export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, appVersion, frames = [], frame, setFrame, onOpenGradient, onRestart }) {
   const { rows, err } = useDeployments(open)
   const [expanded, setExpanded] = useState({})
+  const [copied, setCopied] = useState('')
+  function remix(d) {
+    try { navigator.clipboard.writeText(remixPrompt(d.name)) } catch (e) { }
+    setCopied(d.url); setTimeout(() => setCopied(''), 1900)
+  }
 
   const deploys = rows || []
   const byPerson = {}
@@ -122,7 +132,7 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
                 {(list.length > 0 || (isCurrent && (err || !rows))) && <div className="pmsub">History</div>}
                 {isCurrent && err && <div className="d" style={{ padding: '2px 12px 8px', color: '#b4690e' }}>{err}</div>}
                 {isCurrent && !rows && !err && <div className="d" style={{ padding: '2px 12px 8px' }}>Loading deployments…</div>}
-                {shown.map((d, i) => <DeployRow key={d.url || i} d={d} current={d.url === currentUrl} />)}
+                {shown.map((d, i) => <DeployRow key={d.url || i} d={d} current={d.url === currentUrl} copied={copied === d.url} onRemix={remix} />)}
                 {list.length > TOP_N && (
                   <button className="pmmore" onClick={() => setExpanded(e => ({ ...e, [name]: !isOpen }))}>
                     {isOpen ? 'Show less' : `Load more (${list.length - TOP_N})`}
