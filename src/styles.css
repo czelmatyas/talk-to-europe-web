@@ -1,7 +1,7 @@
 :root{--ease:cubic-bezier(.22,.61,.36,1);
   /* LISA design tokens — neutral surfaces, black primary, soft green accent */
   --ink:#141414; --ink2:#808080; --ink3:#a1a19f; --line:#ececec; --fill:#f5f5f5; --fill2:#ebebeb;
-  --black:#141414; --acc:#2f7d32; --acc-bg:#e6f5e7; --cta:#2a27f2; --rc:18px; --rb:12px;
+  --black:#141414; --acc:#2f7d32; --acc-bg:#e6f5e7; --cta:#c5d7fc; --cta-ink:#0a55c2; --rc:18px; --rb:12px;
   /* one relative width drives every panel. mobile (default): near full-bleed */
   --panel:92vw}
 /* tablet: ~2/3 of the width */
@@ -62,7 +62,7 @@ button,input{font-family:inherit}
 .dskv{display:flex;justify-content:space-between;font-size:14.5px;padding:11px 0;border-top:1px solid var(--line)}
 .dskv span:first-child{color:var(--ink3)}.dskv span:last-child{font-weight:500}
 .btnrow{display:flex;gap:9px;margin-top:16px}
-.btnp{flex:1;background:var(--cta);color:#fff;border:0;font-size:15px;font-weight:600;padding:13px;border-radius:var(--rb);cursor:pointer}
+.btnp{flex:1;background:var(--cta);color:var(--cta-ink);border:0;font-size:15px;font-weight:600;padding:13px;border-radius:var(--rb);cursor:pointer}
 .btns{flex:1;background:var(--fill);color:var(--ink);border:0;font-size:15px;font-weight:600;padding:13px;border-radius:var(--rb);cursor:pointer}
 .srcs{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;align-items:center}
 .srcs .lbl{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink3)}
