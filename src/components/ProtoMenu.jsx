@@ -50,7 +50,7 @@ function ProtoRow({ p, active, onSelect }) {
 
 const REPO_URL = 'https://github.com/czelmatyas/talk-to-europe-web'
 function remixPrompt(branch) {
-  return 'Remix "' + branch + '": in GitHub Desktop → Branch → "Merge into current branch" → pick "' + branch + '". Then ask Claude to tweak the prototype, and hit Commit + Push in GitHub Desktop.'
+  return 'Remix "' + branch + '": in GitHub Desktop → Branch → "Merge into current branch" → pick "' + branch + '" → Push origin. Then tweak with Claude and Push origin again.'
 }
 
 function DeployRow({ d, current, copied, onRemix }) {
@@ -58,8 +58,8 @@ function DeployRow({ d, current, copied, onRemix }) {
     <div className="pmrow deployrow" data-on={current ? 1 : 0}>
       <a className="dl" href={d.url} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flex: 1, minWidth: 0 }}>
         <div style={{ minWidth: 0 }}>
-          <div className="t">{d.name}{d.target === 'production' && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a7f37' }}>production</span>}{current && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a73e8' }}>current</span>}</div>
-          <div className="d">{fmt(d.date)}{d.sha ? ' · ' + d.sha : ''}</div>
+          <div className="t">{fmt(d.date)}{current && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a73e8' }}>current</span>}</div>
+          <div className="d">{d.msg || d.sha || ''}</div>
         </div>
       </a>
       <button className="pmremix" onClick={() => onRemix(d)}>{copied ? 'Copied ✓' : 'Remix'}</button>
@@ -77,15 +77,15 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
   }
 
   const deploys = rows || []
-  const byPerson = {}
-  deploys.forEach(d => { (byPerson[d.author] = byPerson[d.author] || []).push(d) })
-  Object.values(byPerson).forEach(l => l.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0)))
+  const byBranch = {}
+  deploys.forEach(d => { const k = d.name || 'unknown'; (byBranch[k] = byBranch[k] || []).push(d) })
+  Object.values(byBranch).forEach(l => l.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0)))
 
   const currentUrl = deploys.length ? currentUrlOf(deploys) : null
-  const currentAuthor = deploys.find(d => d.url === currentUrl)?.author || 'You'
-  const others = Object.keys(byPerson).filter(n => n !== currentAuthor)
-    .sort((a, b) => new Date(byPerson[b][0]?.date || 0) - new Date(byPerson[a][0]?.date || 0))
-  const people = [currentAuthor, ...others]
+  const currentBranch = deploys.find(d => d.url === currentUrl)?.name || 'main'
+  const others = Object.keys(byBranch).filter(n => n !== currentBranch)
+    .sort((a, b) => new Date(byBranch[b][0]?.date || 0) - new Date(byBranch[a][0]?.date || 0))
+  const branches = [currentBranch, ...others]
 
   return (
     <AnimatePresence>
@@ -110,20 +110,20 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
           {onOpenGradient && <button className="pmmore" style={{ marginTop: 4 }} onClick={onOpenGradient}>Edit gradient style…</button>}
           {onRestart && <button className="pmmore" onClick={onRestart}>↻ Restart prototype</button>}
 
-          {people.map(name => {
-            const list = byPerson[name] || []
-            const isCurrent = name === currentAuthor
-            const isOpen = expanded[name]
+          {branches.map(branch => {
+            const list = byBranch[branch] || []
+            const isCurrent = branch === currentBranch
+            const isOpen = expanded[branch]
             let shown = isOpen ? list : list.slice(0, TOP_N)
             if (currentUrl && !shown.some(d => d.url === currentUrl)) {
               const c = list.find(d => d.url === currentUrl)
               if (c) shown = [...shown, c]
             }
             return (
-              <div key={name}>
+              <div key={branch}>
                 <div className="pmperson">
-                  <span className="av" style={{ background: '#e7eefc', color: '#3b5bdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>{name[0]?.toUpperCase()}</span>
-                  <span className="nm">{name}{isCurrent && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a73e8' }}>you</span>}</span>
+                  <span className="av" style={{ background: '#e7eefc', color: '#3b5bdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>{branch[0]?.toUpperCase()}</span>
+                  <span className="nm">{branch}{isCurrent && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, letterSpacing: .4, textTransform: 'uppercase', color: '#1a73e8' }}>you</span>}</span>
                   {list.length > 0 && <span className="cnt">{list.length} {list.length === 1 ? 'deploy' : 'deploys'}</span>}
                 </div>
 
@@ -134,7 +134,7 @@ export default function ProtoMenu({ open, protos, activeId, onSelect, onClose, a
                 {isCurrent && !rows && !err && <div className="d" style={{ padding: '2px 12px 8px' }}>Loading deployments…</div>}
                 {shown.map((d, i) => <DeployRow key={d.url || i} d={d} current={d.url === currentUrl} copied={copied === d.url} onRemix={remix} />)}
                 {list.length > TOP_N && (
-                  <button className="pmmore" onClick={() => setExpanded(e => ({ ...e, [name]: !isOpen }))}>
+                  <button className="pmmore" onClick={() => setExpanded(e => ({ ...e, [branch]: !isOpen }))}>
                     {isOpen ? 'Show less' : `Load more (${list.length - TOP_N})`}
                   </button>
                 )}

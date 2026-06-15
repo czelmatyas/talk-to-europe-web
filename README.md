@@ -4,24 +4,28 @@ Interactive prototype for the "Talk to Europe" narrative (React + Vite + Framer 
 
 Live: **https://talk-to-europe-web.vercel.app**
 
-## No terminal, no tokens — GitHub Desktop for git, Claude for editing
+## How you work: Claude edits, you click Push
 
-Claude can't reach the internet from its sandbox, so **all git happens in GitHub Desktop** (it has your login + network). Claude just **edits the files**. You do **not** need a personal access token or a Vercel account.
+Claude can't push (its sandbox has no internet), so the one publish step is a button in **GitHub Desktop**. **No tokens, no Vercel account, no terminal** — ignore any prompt asking for those.
 
 **First time (once):**
 1. Make a free GitHub account → https://github.com/signup, send your username to Mátyás to be added as a collaborator.
 2. Install **GitHub Desktop** (https://desktop.github.com) → sign in → clone `talk-to-europe-web`.
-3. In Cowork, **select the cloned folder as your context.**
+3. In Cowork, **select the cloned folder as context.**
+4. In GitHub Desktop: **Current Branch → New Branch**, name it your name (e.g. `lena`).
 
-**Make your version:**
-1. GitHub Desktop: **Current Branch → New Branch**, name it your name (e.g. `lena`).
-2. Tell Claude what to change — e.g. *"edit the Talk prototype so the answer card is taller."*
-3. GitHub Desktop: **Commit**, then **Push / Publish branch**.
-4. Your live link (automatic, no login): `talk-to-europe-web-git-NAME-matyas-9772s-projects.vercel.app`
+**Each change:**
+1. Tell Claude what to edit (prototypes are in `src/protos/`) — e.g. *"edit the Talk prototype so the answer card is taller."*
+2. Open GitHub Desktop → it shows the change → write a short summary → **Commit** → **Push origin**.
+3. Live link (automatic, no login): `talk-to-europe-web-git-NAME-matyas-9772s-projects.vercel.app`
 
 Flows you can ask Claude for: **Talk · Widgets · Wallet · Trust · Public/Personal**.
 
-**Remix someone's version:** open the app → **long-press** → under "Versions" hit **Remix** (it copies the steps). In GitHub Desktop: **Branch → Merge into current branch → pick their branch**, then tweak with Claude and push — it lands as a new version on your branch.
+**Remix someone's version:** open the app → **long-press** → "Versions" → **Remix** copies the steps → in GitHub Desktop: **Branch → Merge into current branch → pick their branch → Push origin**.
+
+### Paste this to your Claude once
+
+> I'm working on the talk-to-europe-web repo. The folder is connected as context and my branch is set up in GitHub Desktop. Your only job is to edit the prototype files (in `src/protos/`) when I ask. Do NOT try to push, clone, fetch, or run git, and never suggest personal access tokens, Vercel logins, or xcode-select — none of that is needed. When a change is ready, just tell me and I'll Commit + "Push origin" in GitHub Desktop.
 
 ## How it works
 
