@@ -1,49 +1,42 @@
-# Talk to Europe — prototype (React + Vite + Framer Motion)
+# Talk to Europe — prototype
 
-Interactive prototype for the BP005 "Talk to Europe" narrative. Recorded clips drop into the narrative's placeholders.
+Interactive prototype for the "Talk to Europe" narrative (React + Vite + Framer Motion). We build the interactions live here and **record finished clips straight out of the app** — no After Effects. Everyone keeps their own versions, and you can remix anyone's.
 
-## Run locally
+Live: **https://talk-to-europe-web.vercel.app**
 
-```
-npm install
-npm run dev      # → http://localhost:5173
-```
+## You don't need the terminal — just talk to Claude
 
-## How we work: a branch per person, remix freely
+Everything below is something you say to your Claude (in Cowork). It runs the git/commands for you.
 
-This is an **ideation playground**, not a production app. There's no release gate. The rule is simple: **everyone gets their own branch, and Vercel gives every branch its own live URL.** `main` is just a shared starting point.
+**First time (once):**
+1. Make a free GitHub account → https://github.com/signup
+2. Send your GitHub username to Mátyás so he can add you as a collaborator.
+3. Sign in to GitHub once (GitHub Desktop's login is the easy way).
 
-**First-time setup (once)**
-1. **Register a free GitHub account** at https://github.com/signup (skip if you have one).
-2. Send your GitHub username to the repo owner so they can **add you as a collaborator** — that's what lets you push your own branch. (You do *not* need a Vercel account.)
-3. Install **git** (or [GitHub Desktop](https://desktop.github.com) for a no-terminal option) and sign in.
-4. Clone the repo: `git clone https://github.com/czelmatyas/talk-to-europe-web.git`
+**Start your own version** — paste to Claude, swap the name:
+> Clone https://github.com/czelmatyas/talk-to-europe-web and make me a new branch called NAME, install and run it, then push and give me my preview link.
 
-**Start your own version**
-```
-git checkout main && git pull
-git checkout -b lena            # your name (or name/idea)
-# ...edit protos, push...
-git push -u origin lena
-```
-Vercel auto-deploys it to `talk-to-europe-web-git-lena-<scope>.vercel.app` — your own stable link to record from and share.
+You get your own live URL (`…-git-NAME-…vercel.app`) to record from and share.
 
-**Remix someone else's version** — just branch off theirs:
-```
-git fetch
-git checkout -b lena-remix origin/marton    # start from Márton's branch
-```
-Tweak, push, and you've got your own live remix without touching theirs.
+**Remix someone else's version** — open the app, **long-press** anywhere to open the menu, find their version under "Versions", and hit **Remix** — it copies a ready prompt. Paste it to Claude, swap NAME, done.
 
-**Pull a single idea across** — copy the proto file. Every prototype is one self-contained file in `src/protos/` (registered in `index.js`), so grabbing someone's `Context.jsx` variant into your branch is a copy-paste. Bump the `author` field so it's clear whose it is.
+**Change a specific prototype** — just tell Claude which one:
+> Edit the Talk prototype so the answer card is taller, then push.
 
-**`main` = the shared baseline.** Anyone can merge something nice into it when it's worth everyone starting from, but nothing has to go there. Each person's branch is its own world.
+(Flows are: Talk · Widgets · Wallet · Trust · Public/Personal.)
 
-## Structure
+## How it works
 
-- `src/App.jsx` — stage: gradient backdrop, grain, long-press proto menu, panel centering
-- `src/protos/` — one file per prototype, registered in `index.js`
-- `src/components/` — `GradientBackdrop`, `StarAvatar`, `ProtoMenu`
+- **Long-press anywhere** → the menu: switch flows, see everyone's deployments (your version history is automatic), pick a recording frame, edit the gradient, restart.
+- **Every push gets its own live URL.** `main` is just the shared starting point — nothing has to go there.
+- Each prototype is one self-contained file in `src/protos/` (listed in `index.js`). Duplicate a file to make a variant; it shows up in the menu.
+
+## Structure (for reference)
+
+- `src/protos/` — one file per flow, registered in `index.js`
+- `src/components/` — `GradientBackdrop`, `StarAvatar`, `StarMascot`, `ProtoMenu`, `GradientEditor`
 - `src/lib/` — `palettes.js` (EU + 27 country palettes), `colors.js`
-- `src/styles.css` — design system + layout (panel width via the `--panel` variable)
-- `INTERACTIONS.md` — what's possible + copy-paste motion patterns
+- `src/styles.css` — design system + layout
+- `INTERACTIONS.md` — motion patterns + ideas to try
+
+Running it by hand (if you want): `npm install` then `npm run dev`.
