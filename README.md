@@ -4,26 +4,21 @@ Interactive prototype for the "Talk to Europe" narrative (React + Vite + Framer 
 
 Live: **https://talk-to-europe-web.vercel.app**
 
-## You don't need the terminal — just talk to Claude
-
-Everything below is something you say to your Claude (in Cowork). It runs the git/commands for you.
+## No terminal needed — you just talk to Claude
 
 **First time (once):**
-1. Make a free GitHub account → https://github.com/signup
-2. Send your GitHub username to Mátyás so he can add you as a collaborator.
-3. Sign in to GitHub once (GitHub Desktop's login is the easy way).
+1. Make a free GitHub account → https://github.com/signup, send your username to Mátyás so he adds you as a collaborator.
+2. Install **GitHub Desktop** (https://desktop.github.com), sign in, and clone `talk-to-europe-web`. (This also sets up your git login, so Claude can push later.)
+3. In Cowork, **select the cloned folder as your context.**
 
-**Start your own version** — paste to Claude, swap the name:
-> Clone https://github.com/czelmatyas/talk-to-europe-web and make me a new branch called NAME, install and run it, then push and give me my preview link.
+**Then everything is a prompt to Claude:**
+> Make me a new branch called NAME, edit the Talk prototype so the answer card is taller, then commit and push and give me my preview link.
 
-You get your own live URL (`…-git-NAME-…vercel.app`) to record from and share.
+Your live link: `talk-to-europe-web-git-NAME-matyas-9772s-projects.vercel.app` — record from it, share it. Flows you can ask for: **Talk · Widgets · Wallet · Trust · Public/Personal**.
 
-**Remix someone else's version** — open the app, **long-press** anywhere to open the menu, find their version under "Versions", and hit **Remix** — it copies a ready prompt. Paste it to Claude, swap NAME, done.
+**Remix someone else's version:** open the app → **long-press** anywhere → under "Versions" hit **Remix** on a deployment → it copies a ready prompt (just swap NAME) → paste to Claude.
 
-**Change a specific prototype** — just tell Claude which one:
-> Edit the Talk prototype so the answer card is taller, then push.
-
-(Flows are: Talk · Widgets · Wallet · Trust · Public/Personal.)
+> If a push ever fails from Claude, just open GitHub Desktop and click **Push** — same result.
 
 ## How it works
 
