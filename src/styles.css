@@ -1,7 +1,7 @@
 :root{--ease:cubic-bezier(.22,.61,.36,1);
   /* LISA design tokens — neutral surfaces, black primary, soft green accent */
   --ink:#141414; --ink2:#808080; --ink3:#a1a19f; --line:#ececec; --fill:#f5f5f5; --fill2:#ebebeb;
-  --black:#141414; --acc:#2f7d32; --acc-bg:#e6f5e7; --cta:#c5d7fc; --cta-ink:#0a55c2; --rc:18px; --rb:12px;
+  --black:#141414; --acc:#2f7d32; --acc-bg:#e6f5e7; --cta:#c5d7fc; --cta-ink:#0a47c2; --rc:26px; --rb:12px;
   /* one relative width drives every panel. mobile (default): near full-bleed */
   --panel:92vw}
 /* tablet: ~2/3 of the width */
@@ -52,22 +52,25 @@ button,input{font-family:inherit}
 .assist{display:flex;align-items:center;gap:8px;font-size:13px;color:#fff;opacity:.9;margin:2px 4px}
 .assist .sq{width:22px;height:22px;border-radius:7px;background:var(--black);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
 
-/* DS card — LISA: clean white surface, soft shadow, generous radius */
-.dscard{align-self:stretch;width:100%;background:#fff;border-radius:20px;padding:18px;box-shadow:0 10px 26px -6px rgba(20,22,40,.16);color:var(--ink)}
-.dscard h3{font-size:19px;font-weight:600;margin:0 0 2px;letter-spacing:-.02em}
+/* DS card — Figma design: frosted gradient surface, 26px radius, 14px padding */
+.dscard{align-self:stretch;width:100%;background:linear-gradient(to bottom,rgba(255,255,255,.5) 41%,#fff 93%);border-radius:var(--rc);padding:14px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 26px -6px rgba(20,22,40,.16);color:var(--ink);overflow:hidden}
+.cardhdr{display:flex;align-items:center;justify-content:space-between;padding:0 9px}
+.dscard h3{font-size:16px;font-weight:500;margin:0;padding:0 9px}
 .lab,.kicker{font-size:11.5px;font-weight:500;letter-spacing:.4px;text-transform:uppercase;color:var(--ink3)}
-.dscard p{font-size:14.5px;line-height:1.5;color:var(--ink2);margin:6px 0}
-.pct{display:inline-flex;align-items:center;gap:6px;background:var(--fill);color:var(--ink);font-weight:600;font-size:12.5px;padding:5px 11px;border-radius:999px;margin-bottom:8px}
-.pct::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc)}
-.dskv{display:flex;justify-content:space-between;font-size:14.5px;padding:11px 0;border-top:1px solid var(--line)}
-.dskv span:first-child{color:var(--ink3)}.dskv span:last-child{font-weight:500}
-.btnrow{display:flex;gap:9px;margin-top:16px}
-.btnp{flex:1;background:var(--cta);color:var(--cta-ink);border:0;font-size:15px;font-weight:600;padding:13px;border-radius:var(--rb);cursor:pointer}
-.btns{flex:1;background:var(--fill);color:var(--ink);border:0;font-size:15px;font-weight:600;padding:13px;border-radius:var(--rb);cursor:pointer}
-.srcs{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;align-items:center}
-.srcs .lbl{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink3)}
-.srcchip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2);background:var(--fill);padding:6px 10px;border-radius:999px}
-.srcchip i{width:16px;height:16px;border-radius:50%;background:var(--black);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;font-style:normal}
+.dscard p{font-size:14px;line-height:1.5;color:var(--ink2);margin:0;padding:0 9px}
+.pct{display:inline-flex;align-items:center;background:rgba(255,255,255,.8);color:#477eeb;font-weight:500;font-size:14px;padding:10px 12px;border-radius:48px}
+/* KV group — white container grouping related rows */
+.kvgroup{display:flex;flex-direction:column;gap:12px;background:#fff;border-radius:12px;padding:14px}
+.dskv{display:flex;justify-content:space-between;font-size:14px;line-height:1.3}
+.dskv span:first-child{color:#80838e}.dskv span:last-child{color:rgba(13,13,13,.8)}
+.btnrow{display:flex;gap:7px}
+.btnp{flex:1;background:var(--cta);color:var(--cta-ink);border:0;font-size:16px;font-weight:500;padding:15px;border-radius:var(--rb);cursor:pointer;box-shadow:0 0.6px 0 rgba(10,85,194,.4)}
+.btns{flex:1;background:transparent;color:var(--ink2);border:1px solid var(--cta);font-size:16px;font-weight:500;padding:15px;border-radius:var(--rb);cursor:pointer}
+.srcs{display:inline-flex;gap:10px;align-items:center;background:#e6f5e7;border-radius:25px;padding:6px 6px 6px 8px;align-self:flex-start}
+.srcs .lbl{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:rgba(47,125,50,.6);font-weight:500}
+.srcchip{display:inline-flex;align-items:center;font-size:11px;color:rgba(47,125,50,.8);background:#fbfefb;padding:6px 9px;border-radius:999px;font-weight:500}
+.srcchip svg{display:none}
+.srcchip i{width:16px;height:16px;border-radius:50%;background:var(--acc);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;font-style:normal}
 .warnhdr{display:flex;align-items:center;gap:8px;background:var(--fill);color:var(--ink);font-weight:600;font-size:14px;padding:11px 13px;border-radius:14px;margin-bottom:8px}
 .verdict{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);font-size:14.5px}
 .vi{width:22px;height:22px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;margin-top:1px}
@@ -97,7 +100,7 @@ button,input{font-family:inherit}
 
 /* context composer */
 .ctxwrap{margin:auto;width:100%;padding:0 16px}
-.ctxbar{position:relative;background:#fff;border-radius:30px;padding:20px 22px;box-shadow:0 12px 44px rgba(20,22,40,.13);transition:min-height .5s var(--ease)}
+.ctxbar{position:relative;background:linear-gradient(to bottom,rgba(255,255,255,.5) 41%,#fff 93%);border-radius:var(--rc);padding:14px 18px;box-shadow:0 12px 44px rgba(20,22,40,.13);transition:min-height .5s var(--ease)}
 /* voice mode — the input field itself grows into a white panel with the light-grey 12-star mascot */
 .ctxbar[data-voice="1"]{min-height:min(420px,56vh)}
 .composerwrap{position:relative;z-index:50}
@@ -107,7 +110,7 @@ button,input{font-family:inherit}
 .starmascot svg{width:100%;height:100%;display:block;overflow:visible}
 .starmascot .ms path{fill:#d6d6dd;stroke:#d6d6dd;stroke-width:3.8;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .vlabel{color:var(--ink2);font-size:17px;font-weight:500}
-.ctxinput{display:block;width:100%;border:0;background:transparent;outline:none;font-size:22px;font-weight:500;color:var(--ink);caret-color:var(--cta);height:30px;margin:2px 0 16px;padding:0}
+.ctxinput{display:block;width:100%;border:0;background:transparent;outline:none;font-size:18px;font-weight:400;color:var(--ink);caret-color:var(--cta);height:30px;margin:2px 0 14px;padding:0}
 .cttoolbar{display:flex;align-items:center;gap:10px;min-height:40px}
 .ctxchips{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
 .ctxchips::-webkit-scrollbar{display:none}
